@@ -20,10 +20,10 @@ export const Header: React.FC<Props> = () => {
         <Link to='/'>Home</Link>
       </div>
       <div>
-        <Link to='/register'>Register</Link>
+        <Link to='/signin'>Sign In</Link>
       </div>
       <div>
-        <Link to='/login'>Login</Link>
+        <Link to='/signup'>Sign Up</Link>
       </div>
       <div>
         <Link to='/bye'>Bye</Link>

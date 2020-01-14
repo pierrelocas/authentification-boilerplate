@@ -78,7 +78,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async register(
+  async signUp(
     @Arg('email') email: string,
     @Arg('password') password: string
   ): Promise<Boolean> {
@@ -89,7 +89,7 @@ export class UserResolver {
   }
 
   @Mutation(() => LoginResponse)
-  async login(
+  async signIn(
     @Arg('email') email: string,
     @Arg('password') password: string,
     @Ctx() { res }: MyContext
