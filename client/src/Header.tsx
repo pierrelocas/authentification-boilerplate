@@ -1,13 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useMeQuery, useLogoutMutation } from './generated/graphql'
+import { useMeQuery, useSignOutMutation } from './generated/graphql'
 import { setAccessToken } from './accessToken'
 
 interface Props {}
 
 export const Header: React.FC<Props> = () => {
   const { data, loading, error } = useMeQuery()
-  const [logout, { client }] = useLogoutMutation()
+  const [logout, { client }] = useSignOutMutation()
   if (loading) {
     console.log('loading!')
   }

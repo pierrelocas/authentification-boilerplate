@@ -5,6 +5,7 @@ import { Bye } from './pages/Bye'
 import { Header } from './Header'
 import { SignIn } from './pages/SignIn'
 import { SignUp } from './pages/SignUp'
+import { Confirm } from './pages/Confirm'
 
 export const Routes: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ export const Routes: React.FC = () => {
           <Route path='/signin' component={SignIn} />
           <Route path='/signup' component={SignUp} />
           <Route path='/bye' component={Bye} />
+          <Route path='/confirm/:token' component={Confirm} />
           <Route path='/' render={() => <div>404</div>} />
         </Switch>
       </div>

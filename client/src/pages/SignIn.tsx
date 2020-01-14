@@ -59,12 +59,12 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 }))
 
 export const SignIn: React.FC<Props> = ({ history }) => {
-  const [login] = useSignInMutation()
+  const [signIn] = useSignInMutation()
   const classes = useStyles()
   const { register, control, handleSubmit, errors } = useForm<FormData>()
 
   const onSubmit = handleSubmit(async ({ email, password, remember }) => {
-    const { data } = await login({
+    const { data } = await signIn({
       variables: { email, password },
       update: (store, { data }) => {
         if (!data) {

@@ -19,7 +19,7 @@ import { isAuth } from './isAuth'
 import { verify } from 'jsonwebtoken'
 
 @ObjectType()
-class LoginResponse {
+class signInResponse {
   @Field()
   accessToken: string
   @Field(() => User)
@@ -72,28 +72,30 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Ctx() { res }: MyContext) {
+  async signOut(@Ctx() { res }: MyContext) {
     sendRefreshToken(res, '')
     return true
   }
 
   @Mutation(() => Boolean)
   async signUp(
+    @Arg('firstname') firstname: string,
+    @Arg('lastname') lastname: string,
     @Arg('email') email: string,
     @Arg('password') password: string
   ): Promise<Boolean> {
     const hashPassword = await hash(password, 12)
 
-    await User.insert({ email, password: hashPassword })
+    await User.insert({ firstname, lastname, email, password: hashPassword })
     return true
   }
 
-  @Mutation(() => LoginResponse)
+  @Mutation(() => signInResponse)
   async signIn(
     @Arg('email') email: string,
     @Arg('password') password: string,
     @Ctx() { res }: MyContext
-  ): Promise<LoginResponse> {
+  ): Promise<signInResponse> {
     const user = await User.findOne({ where: { email } })
     if (!user) {
       throw new Error('User not found!')

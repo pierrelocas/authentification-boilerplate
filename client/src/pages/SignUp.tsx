@@ -64,13 +64,17 @@ export const SignUp: React.FC<Props> = ({ history }) => {
   const classes = useStyles()
   const { register, control, handleSubmit, errors } = useForm<FormData>()
 
-  const onSubmit = handleSubmit(async ({ email, password }) => {
-    const { data } = await SignUp({ variables: { email, password } })
-    if (data && data.signUp) {
-      history.push('/')
+  const onSubmit = handleSubmit(
+    async ({ firstname, lastname, email, password }) => {
+      const { data } = await SignUp({
+        variables: { firstname, lastname, email, password }
+      })
+      if (data && data.signUp) {
+        history.push('/')
+      }
+      console.log(data)
     }
-    console.log(data)
-  })
+  )
 
   return (
     <Container component='main' maxWidth='xs'>
