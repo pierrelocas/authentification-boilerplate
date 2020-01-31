@@ -60,21 +60,30 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 }))
 
 export const SignUp: React.FC<Props> = ({ history }) => {
-  const [SignUp] = useSignUpMutation()
+  const [SignUp, { error, loading }] = useSignUpMutation({
+    onError: err => console.log(err)
+  })
   const classes = useStyles()
   const { register, control, handleSubmit, errors } = useForm<FormData>()
 
   const onSubmit = handleSubmit(
     async ({ firstname, lastname, email, password }) => {
-      const { data } = await SignUp({
+      const response = await SignUp({
         variables: { firstname, lastname, email, password }
       })
-      if (data && data.signUp) {
+      if (response && response.data && response.data.signUp) {
         history.push('/')
       }
-      console.log(data)
     }
   )
+
+  if (loading) {
+    return <div>Loading</div>
+  }
+
+  if (error) {
+    return <div>Error {JSON.stringify(error, null, 2)}</div>
+  }
 
   return (
     <Container component='main' maxWidth='xs'>

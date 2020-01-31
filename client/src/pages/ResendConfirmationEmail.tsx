@@ -4,18 +4,15 @@ import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 import Link from '@material-ui/core/Link'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
-import { MeQuery, MeDocument, useSignInMutation } from '../generated/graphql'
-import { setAccessToken } from '../accessToken'
+import { useSendConfirmationEmailMutation } from '../generated/graphql'
 
 type FormData = {
   email: string
@@ -58,30 +55,21 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
   }
 }))
 
-export const SignIn: React.FC<Props> = ({ history }) => {
-  const [signIn] = useSignInMutation()
+export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
+  const [sendConfirmationEmail] = useSendConfirmationEmailMutation({
+    onError: err => console.log(err)
+  })
   const classes = useStyles()
-  const { register, control, handleSubmit, errors } = useForm<FormData>()
+  const { register, handleSubmit, errors } = useForm<FormData>()
 
-  const onSubmit = handleSubmit(async ({ email, password, remember }) => {
-    const { data } = await signIn({
-      variables: { email, password },
-      update: (store, { data }) => {
-        if (!data) {
-          return null
-        }
-        store.writeQuery<MeQuery>({
-          query: MeDocument,
-          data: {
-            me: data.signIn.user
-          }
-        })
-      }
+  const onSubmit = handleSubmit(async ({ email }) => {
+    console.log(email)
+    const response = await sendConfirmationEmail({
+      variables: { email }
     })
-    console.log(email, password, remember)
-    if (data && data.signIn) {
-      setAccessToken(data.signIn.accessToken)
-      history.push('/')
+    console.log(email)
+    if (response && response.data && response.data.sendConfirmationEmail) {
+      console.log('Success')
     }
   })
 
@@ -93,7 +81,7 @@ export const SignIn: React.FC<Props> = ({ history }) => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component='h1' variant='h5'>
-          Sign In
+          Resend Confirmation Email
         </Typography>
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
@@ -110,29 +98,6 @@ export const SignIn: React.FC<Props> = ({ history }) => {
             error={!!errors.email}
             helperText={errors.email && errors.email.message}
           />
-          <TextField
-            fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            inputRef={register({
-              required: { value: true, message: 'Field is required.' },
-              minLength: { value: 4, message: 'Minimum of 4 characters.' }
-            })}
-            error={!!errors.password}
-            helperText={errors.password && errors.password.message}
-          />
-          <Controller
-            as={
-              <FormControlLabel
-                control={<Checkbox color='primary' />}
-                label='Remember me'
-              />
-            }
-            name='remember'
-            control={control}
-            defaultValue={false}
-          />
           <Button
             type='submit'
             fullWidth
@@ -140,12 +105,12 @@ export const SignIn: React.FC<Props> = ({ history }) => {
             color='primary'
             className={classes.submit}
           >
-            Sign In
+            Send Confirmation Email
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link variant='body2' component={RouterLink} to='/reset-password'>
-                Forgot password?
+              <Link variant='body2' component={RouterLink} to='/signin'>
+                Sign In
               </Link>
             </Grid>
             <Grid item>

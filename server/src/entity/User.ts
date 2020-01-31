@@ -17,7 +17,7 @@ export class User extends BaseEntity {
   lastname: string
 
   @Field(() => String)
-  @Column('text')
+  @Column('text', { unique: true })
   email: string
 
   @Column('text')
@@ -31,5 +31,5 @@ export class User extends BaseEntity {
 
   // can remove nullable, just to work with existing data
   @Column('boolean', { nullable: true, default: false })
-  confirm: boolean
+  confirmed: boolean
 }

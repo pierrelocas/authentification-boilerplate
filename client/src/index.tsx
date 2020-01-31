@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import ApolloClient from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
+import { onError } from 'apollo-link-error'
 import { TokenRefreshLink } from 'apollo-link-token-refresh'
 import { ApolloLink } from 'apollo-link'
 import { setContext } from 'apollo-link-context'
@@ -16,6 +17,17 @@ const cache = new InMemoryCache()
 const link = new HttpLink({
   uri: 'http://localhost:4000/graphql',
   credentials: 'include'
+})
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.log('oooops', message)
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      )
+    })
+  if (networkError) console.log(`[Network error]: ${networkError}`)
 })
 
 const authLink = setContext((_, { headers }) => {
@@ -65,7 +77,7 @@ const tokenRefreshLink = new TokenRefreshLink({
 
 const client = new ApolloClient({
   cache: cache,
-  link: ApolloLink.from([tokenRefreshLink, authLink, link])
+  link: ApolloLink.from([tokenRefreshLink, authLink, errorLink, link])
 })
 
 ReactDOM.render(

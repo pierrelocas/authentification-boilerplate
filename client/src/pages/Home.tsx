@@ -13,7 +13,13 @@ export const Home: React.FC<Props> = () => {
       <div>Home Page</div>
       <ul>
         {data.users.map(u => {
-          return <li key={u.id}>{u.email}</li>
+          return (
+            <li key={u.id}>
+              <p>{u.firstname}</p>
+              <p>{u.lastname}</p>
+              <p>{u.email}</p>
+            </li>
+          )
         })}
       </ul>
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
