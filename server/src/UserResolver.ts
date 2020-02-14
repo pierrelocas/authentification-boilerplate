@@ -105,20 +105,24 @@ export class UserResolver {
   ): Promise<Boolean> {
     const hashPassword = await hash(password, 12)
 
-    await User.insert({
+    // insert will throw exception if dupplicate email.
+    const response = await User.insert({
       firstname,
       lastname,
       email,
       password: hashPassword
     })
 
-    const user = await User.findOne({ where: { email } })
+    const userId = response.identifiers[0]
+
+    const user = await User.findOne(userId)
+
     if (!user) {
       throw new Error('User not found!')
     }
     const token = createConfirmToken(user)
-    console.log(token)
     // Don't want to send email during testing!
+    console.log(token)
     // await sendConfirmationEmail(token, user)
     return true
   }

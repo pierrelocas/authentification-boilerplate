@@ -14,43 +14,44 @@ export const Header: React.FC<Props> = () => {
   if (error) {
     console.log(error.message)
   }
-  return (
-    <header>
-      <div>
-        <Link to='/'>Home</Link>
-      </div>
-      <div>
-        <Link to='/signin'>Sign In</Link>
-      </div>
-      <div>
-        <Link to='/signup'>Sign Up</Link>
-      </div>
-      <div>
-        <Link to='/bye'>Bye</Link>
-      </div>
-      <div>
-        {data && data.me ? `You are logged as : ${data.me.email}` : null}
-      </div>
-      <div>
-        {!loading && data && data.me ? (
-          <button
-            onClick={async () => {
-              const { data, errors } = await logout()
-              console.log('test', data, errors)
-              setAccessToken('')
-              try {
-                await client!.resetStore()
-              } catch (err) {
-                console.log(err)
-              }
-            }}
-          >
-            logout
-          </button>
-        ) : (
-          'not logged in'
-        )}
-      </div>
-    </header>
-  )
+  return null
+  // return (
+  //   <header>
+  //     <div>
+  //       <Link to='/'>Home</Link>
+  //     </div>
+  //     <div>
+  //       <Link to='/signin'>Sign In</Link>
+  //     </div>
+  //     <div>
+  //       <Link to='/signup'>Sign Up</Link>
+  //     </div>
+  //     <div>
+  //       <Link to='/bye'>Bye</Link>
+  //     </div>
+  //     <div>
+  //       {data && data.me ? `You are logged as : ${data.me.email}` : null}
+  //     </div>
+  //     <div>
+  //       {!loading && data && data.me ? (
+  //         <button
+  //           onClick={async () => {
+  //             const { data, errors } = await logout()
+  //             console.log('test', data, errors)
+  //             setAccessToken('')
+  //             try {
+  //               await client!.resetStore()
+  //             } catch (err) {
+  //               console.log(err)
+  //             }
+  //           }}
+  //         >
+  //           logout
+  //         </button>
+  //       ) : (
+  //         'not logged in'
+  //       )}
+  //     </div>
+  //   </header>
+  // )
 }

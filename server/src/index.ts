@@ -11,6 +11,7 @@ import cors from 'cors'
 import { User } from './entity/User'
 import { createAccessToken, createRefreshToken } from './auth'
 import { sendRefreshToken } from './sendRefreshToken'
+import { ErrorInterceptor } from './ErrorInterceptor'
 ;(async () => {
   const app = express()
   app.use(
@@ -56,7 +57,8 @@ import { sendRefreshToken } from './sendRefreshToken'
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver]
+      resolvers: [UserResolver],
+      globalMiddlewares: [ErrorInterceptor]
     }),
     context: ({ req, res }) => ({ req, res })
   })

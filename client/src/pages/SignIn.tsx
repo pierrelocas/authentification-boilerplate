@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
@@ -16,6 +16,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
 import { MeQuery, MeDocument, useSignInMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
+import { NotificationContext } from '../App'
 
 type FormData = {
   email: string
@@ -59,29 +60,41 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 }))
 
 export const SignIn: React.FC<Props> = ({ history }) => {
-  const [signIn] = useSignInMutation()
-  const classes = useStyles()
+  const { setNotification } = useContext(NotificationContext)
   const { register, control, handleSubmit, errors } = useForm<FormData>()
+  const [signIn, { loading }] = useSignInMutation({
+    errorPolicy: 'all',
+    update: (store, { data }) => {
+      if (!data) {
+        return null
+      }
+      store.writeQuery<MeQuery>({
+        query: MeDocument,
+        data: {
+          me: data.signIn.user
+        }
+      })
+    },
+    onError: err =>
+      setNotification({
+        show: true,
+        type: 'error',
+        message: err.message.split(':')[1]
+      })
+  })
+  const classes = useStyles()
+
+  if (loading) {
+    console.log('loading')
+  }
 
   const onSubmit = handleSubmit(async ({ email, password, remember }) => {
-    const { data } = await signIn({
-      variables: { email, password },
-      update: (store, { data }) => {
-        if (!data) {
-          return null
-        }
-        store.writeQuery<MeQuery>({
-          query: MeDocument,
-          data: {
-            me: data.signIn.user
-          }
-        })
-      }
+    const response = await signIn({
+      variables: { email, password }
     })
-    console.log(email, password, remember)
-    if (data && data.signIn) {
-      setAccessToken(data.signIn.accessToken)
-      history.push('/')
+    if (response && response.data && response.data.signIn) {
+      setAccessToken(response.data.signIn.accessToken)
+      history.push('/dashboard')
     }
   })
 

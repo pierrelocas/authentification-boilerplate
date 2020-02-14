@@ -1,23 +1,29 @@
-import React, { useState, useEffect, createContext } from 'react'
+import React, { useState, useEffect, createContext, Context } from 'react'
 import { Routes } from './Routes'
 import { setAccessToken } from './accessToken'
 import { Notification } from './Notification'
 
 interface Props {}
 
-interface NotificationType {
+interface SetNotificationType {
   show: boolean
   type: 'success' | 'info' | 'warning' | 'error' | undefined
   message: string
 }
 
-const initialNotification: NotificationType = {
+interface NotificationType {
+  setNotification: React.Dispatch<
+    React.SetStateAction<SetNotificationType>
+  > | null
+}
+
+const initialNotification: SetNotificationType = {
   show: false,
   type: undefined,
   message: ''
 }
 
-export const NotificationContext: any = createContext({
+export const NotificationContext: any = createContext<NotificationType>({
   setNotification: null
 })
 
@@ -25,6 +31,9 @@ export const App: React.FC<Props> = () => {
   const [loading, setLoading] = useState(true)
   const [notification, setNotification] = useState(initialNotification)
 
+  /**
+   * On first load or refresh fetch an access token with httpOnly cookie 'refresh token'
+   */
   useEffect(() => {
     fetch('http://localhost:4000/refresh-token', {
       credentials: 'include',
@@ -34,7 +43,6 @@ export const App: React.FC<Props> = () => {
       if (data && data.ok) {
         setAccessToken(data.accessToken)
       }
-
       setLoading(false)
     })
   }, [])

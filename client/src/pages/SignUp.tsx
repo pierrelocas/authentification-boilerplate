@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
@@ -15,6 +15,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { useForm, Controller } from 'react-hook-form'
 import { useSignUpMutation } from '../generated/graphql'
+import { NotificationContext } from '../App'
 
 interface FormData {
   firstname: string
@@ -60,8 +61,15 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 }))
 
 export const SignUp: React.FC<Props> = ({ history }) => {
-  const [SignUp, { error, loading }] = useSignUpMutation({
-    onError: err => console.log(err)
+  const { setNotification } = useContext(NotificationContext)
+  const [SignUp, { loading }] = useSignUpMutation({
+    onError: err => {
+      setNotification({
+        show: true,
+        type: 'error',
+        message: err.message.split(':')[1]
+      })
+    }
   })
   const classes = useStyles()
   const { register, control, handleSubmit, errors } = useForm<FormData>()
@@ -72,17 +80,19 @@ export const SignUp: React.FC<Props> = ({ history }) => {
         variables: { firstname, lastname, email, password }
       })
       if (response && response.data && response.data.signUp) {
-        history.push('/')
+        setNotification({
+          show: true,
+          type: 'success',
+          message:
+            'Account created successfully! An email has been sent to you to confirm your email address.'
+        })
+        history.push('/signin')
       }
     }
   )
 
   if (loading) {
     return <div>Loading</div>
-  }
-
-  if (error) {
-    return <div>Error {JSON.stringify(error, null, 2)}</div>
   }
 
   return (
