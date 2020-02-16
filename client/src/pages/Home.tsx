@@ -1,6 +1,6 @@
 import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
-import { useMeQuery } from '../generated/graphql'
+import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
+import { useMeQuery, useSignOutMutation } from '../generated/graphql'
 
 import AppBar from '@material-ui/core/AppBar'
 import Button from '@material-ui/core/Button'
@@ -17,6 +17,7 @@ import Link from '@material-ui/core/Link'
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import Box from '@material-ui/core/Box'
+import { setAccessToken } from '../accessToken'
 
 function Copyright() {
   return (
@@ -147,13 +148,28 @@ const footers = [
   }
 ]
 
-interface Props {}
+interface Props extends RouteComponentProps {}
 
-export const Home: React.FC<Props> = () => {
+export const Home: React.FC<Props> = ({ history }) => {
   const { data, loading } = useMeQuery({ fetchPolicy: 'network-only' })
+  const [logout, { client }] = useSignOutMutation()
   const classes = useStyles()
 
   if (loading || !data) return <div>Loading...</div>
+
+  const handleLogout = async () => {
+    console.log('logout')
+    const { data, errors } = await logout()
+    console.log('test', data, errors)
+    setAccessToken('')
+
+    try {
+      await client!.resetStore()
+    } catch (err) {
+      console.log(err)
+    }
+    history.push('/')
+  }
 
   return (
     <React.Fragment>
@@ -200,10 +216,20 @@ export const Home: React.FC<Props> = () => {
             </Link>
           </nav>
           {data && data.me ? (
-            <Typography variant='h5' color='primary'>
-              {' '}
-              Welcome back {data.me.firstname} !
-            </Typography>
+            <>
+              <Typography variant='inherit' color='primary'>
+                {' '}
+                Welcome back {data.me.firstname} ! {'   '}
+              </Typography>
+              <Button
+                color='primary'
+                variant='contained'
+                size='small'
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </>
           ) : (
             <Button
               component={RouterLink}

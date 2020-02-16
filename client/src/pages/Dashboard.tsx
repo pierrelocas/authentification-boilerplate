@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -23,9 +23,14 @@ import { mainListItems, secondaryListItems } from '../components/listItems'
 import Chart from '../components/Chart'
 import Deposits from '../components/Deposits'
 import Orders from '../components/Orders'
-import { useSignOutMutation, useMeQuery } from '../generated/graphql'
+import {
+  useSignOutMutation,
+  useMeQuery,
+  useByeQuery
+} from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { RouteComponentProps } from 'react-router-dom'
+import { NotificationContext } from '../App'
 
 function Copyright() {
   return (
@@ -123,10 +128,22 @@ const useStyles = makeStyles(theme => ({
 
 export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles()
+  const { setNotification } = useContext(NotificationContext)
   const [open, setOpen] = React.useState(true)
+  const { loading: loadingBye } = useByeQuery({
+    fetchPolicy: 'network-only',
+    onError: err => {
+      setNotification({
+        show: true,
+        type: 'error',
+        message: err.message.split(':')[1]
+      })
+      history.push('/confirm-email')
+    }
+  })
   const { data, loading, error } = useMeQuery()
   const [logout, { client }] = useSignOutMutation()
-  if (loading) {
+  if (loading || loadingBye) {
     console.log('loading!')
   }
   if (error) {

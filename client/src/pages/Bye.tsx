@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react'
 import { useByeQuery } from '../generated/graphql'
 import { RouteComponentProps } from 'react-router-dom'
-import { NotificationContext } from '../App'
+// import { NotificationContext } from '../App'
 
 interface Props extends RouteComponentProps {}
 

@@ -109,13 +109,13 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link variant='body2' component={RouterLink} to='/signin'>
-                Sign In
+              <Link variant='body2' component={RouterLink} to='/'>
+                Home
               </Link>
             </Grid>
             <Grid item>
-              <Link variant='body2' component={RouterLink} to='/signup'>
-                Don't have an account? Sign Up
+              <Link variant='body2' component={RouterLink} to='/dashboard'>
+                Email already confirmed? Dashboard
               </Link>
             </Grid>
           </Grid>

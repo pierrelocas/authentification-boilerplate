@@ -2,32 +2,35 @@ import React, { useState, useEffect, createContext, Context } from 'react'
 import { Routes } from './Routes'
 import { setAccessToken } from './accessToken'
 import { Notification } from './Notification'
+import { Backdrop } from '@material-ui/core'
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 
 interface Props {}
 
-interface SetNotificationType {
+interface NotificationType {
   show: boolean
   type: 'success' | 'info' | 'warning' | 'error' | undefined
   message: string
 }
 
-interface NotificationType {
-  setNotification: React.Dispatch<
-    React.SetStateAction<SetNotificationType>
-  > | null
-}
-
-const initialNotification: SetNotificationType = {
+const initialNotification: NotificationType = {
   show: false,
   type: undefined,
   message: ''
 }
 
-export const NotificationContext: any = createContext<NotificationType>({
-  setNotification: null
-})
+export const NotificationContext: any = createContext({})
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1
+    }
+  })
+)
 
 export const App: React.FC<Props> = () => {
+  const classes = useStyles()
   const [loading, setLoading] = useState(true)
   const [notification, setNotification] = useState(initialNotification)
 
@@ -53,14 +56,16 @@ export const App: React.FC<Props> = () => {
 
   return (
     <NotificationContext.Provider value={{ setNotification }}>
-      <Notification
-        open={notification.show}
-        handleClose={() => setNotification({ ...notification, show: false })}
-        type={notification.type}
-        duration={6000}
-      >
-        {notification.message}
-      </Notification>
+      <Backdrop className={classes.backdrop} open={notification.show}>
+        <Notification
+          open={notification.show}
+          handleClose={() => setNotification({ ...notification, show: false })}
+          type={notification.type}
+          duration={6000}
+        >
+          {notification.message}
+        </Notification>
+      </Backdrop>
       <Routes />
     </NotificationContext.Provider>
   )
