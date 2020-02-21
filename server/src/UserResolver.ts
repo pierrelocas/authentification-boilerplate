@@ -254,9 +254,16 @@ export class UserResolver {
     @Arg('token') token: string,
     @Arg('password') password: string
   ): Promise<boolean> {
-    const tokenPayload: any = verify(token, RESET_TOKEN_SECRET!)
-    console.log(tokenPayload)
-    console.log(password)
+    const { userId }: any = verify(token, RESET_TOKEN_SECRET!)
+    console.log(userId)
+    const hashPassword = await hash(password, 12)
+    const { affected } = await User.update(
+      { id: userId },
+      { password: hashPassword }
+    )
+    if (affected === 0) {
+      throw new Error('User id not found')
+    }
     return true
   }
 }

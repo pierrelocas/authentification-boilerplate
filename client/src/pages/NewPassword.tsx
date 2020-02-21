@@ -42,10 +42,13 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(8)
+  },
+  textField: {
+    marginTop: theme.spacing(3)
   },
   submit: {
-    margin: theme.spacing(3, 0, 2)
+    margin: theme.spacing(5, 0, 2)
   }
 }))
 
@@ -64,15 +67,46 @@ function Copyright() {
 
 export const NewPassword: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
-  const [resetPassword] = useResetPasswordMutation()
+  const [resetPasswordMutation] = useResetPasswordMutation({
+    onError: err => {
+      let message = ''
+      if (err.message.includes('invalid signature')) {
+        message = 'Invalid token, please request another reset password email.'
+      }
+      setNotification({
+        show: true,
+        type: 'error',
+        message: message || err.message.split(':')[1]
+      })
+      history.push('/reset-password')
+    }
+  })
   const { token } = useParams()
   const classes = useStyles()
-  const { register, handleSubmit, errors } = useForm<FormData>()
-  console.log(token)
+  const { register, handleSubmit, errors, setError, clearError } = useForm<
+    FormData
+  >()
+  // console.log(token)
 
   const onSubmit = handleSubmit(async ({ password, confirmPassword }) => {
-    console.log(password, confirmPassword)
+    if (password !== confirmPassword) {
+      setError('confirmPassword', 'noMatch', "Password don't match")
+      return
+    }
+    let result
+    if (token && password) {
+      result = await resetPasswordMutation({ variables: { token, password } })
+    }
+    if (result && result.data && result.data.resetPassword) {
+      setNotification({
+        show: true,
+        type: 'success',
+        message: 'Password was changed successfully!'
+      })
+      history.push('/signin')
+    }
   })
+
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
@@ -97,14 +131,17 @@ export const NewPassword: React.FC<Props> = ({ history }) => {
           />
           <TextField
             fullWidth
+            className={classes.textField}
             label='Confirm Password'
             name='confirmPassword'
             inputRef={register({
               required: { value: true, message: 'Field is required.' },
               minLength: { value: 4, message: 'Minimum of 4 characters.' }
             })}
-            error={!!errors.password}
-            helperText={errors.password && errors.password.message}
+            error={!!errors.confirmPassword}
+            helperText={
+              errors.confirmPassword && errors.confirmPassword.message
+            }
           />
           <Button
             type='submit'
