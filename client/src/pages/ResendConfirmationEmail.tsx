@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
 import { useSendConfirmationEmailMutation } from '../generated/graphql'
+import { NotificationContext } from '../App'
 
 type FormData = {
   email: string
@@ -56,20 +57,38 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 }))
 
 export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
+  const { setNotification } = useContext(NotificationContext)
   const [sendConfirmationEmail] = useSendConfirmationEmailMutation({
-    onError: err => console.log(err)
+    onError: err => {
+      console.log(err)
+      setNotification({
+        show: true,
+        type: 'error',
+        message: err.message.split(':')[1]
+      })
+      console.log(err.message)
+      if (err.message.includes('already been confirmed')) {
+        history.push('/dashboard')
+      }
+    }
   })
   const classes = useStyles()
   const { register, handleSubmit, errors } = useForm<FormData>()
 
   const onSubmit = handleSubmit(async ({ email }) => {
-    console.log(email)
+    // console.log(email)
     const response = await sendConfirmationEmail({
       variables: { email }
     })
-    console.log(email)
+
     if (response && response.data && response.data.sendConfirmationEmail) {
-      console.log('Success')
+      // console.log('Success')
+      setNotification({
+        show: true,
+        type: 'success',
+        message: 'Confirmation link has been sent successfully!'
+      })
+      history.push('/')
     }
   })
 
@@ -115,7 +134,7 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
             </Grid>
             <Grid item>
               <Link variant='body2' component={RouterLink} to='/dashboard'>
-                Email already confirmed? Dashboard
+                Email already confirmed? Go to Dashboard
               </Link>
             </Grid>
           </Grid>

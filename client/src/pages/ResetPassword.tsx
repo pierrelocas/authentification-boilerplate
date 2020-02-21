@@ -1,17 +1,18 @@
-import React from 'react'
-import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
+import { Container, Theme } from '@material-ui/core'
 import Avatar from '@material-ui/core/Avatar'
+import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import TextField from '@material-ui/core/TextField'
-import Link from '@material-ui/core/Link'
-import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import Typography from '@material-ui/core/Typography'
+import Link from '@material-ui/core/Link'
 import { makeStyles } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
-import { Container, Theme } from '@material-ui/core'
+import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
+import { NotificationContext } from '../App'
 import { useSendResetPasswordEmailMutation } from '../generated/graphql'
 
 type FormData = {
@@ -54,8 +55,16 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
 }))
 
 export const ResetPassword: React.FC<Props> = ({ history }) => {
+  const { setNotification } = useContext(NotificationContext)
   const [sendResetPassword] = useSendResetPasswordEmailMutation({
-    onError: err => console.log(err)
+    onError: err => {
+      console.log(err)
+      setNotification({
+        show: true,
+        type: 'error',
+        message: err.message.split(':')[1]
+      })
+    }
   })
   const classes = useStyles()
   const { register, handleSubmit, errors } = useForm<FormData>()
@@ -67,7 +76,14 @@ export const ResetPassword: React.FC<Props> = ({ history }) => {
     })
     console.log(email)
     if (response && response.data && response.data.sendResetPasswordEmail) {
-      console.log('Success')
+      // console.log('Success')
+      setNotification({
+        show: true,
+        type: 'success',
+        message:
+          'Please check your emails and follow the procedure to change your email.'
+      })
+      history.push('/')
     }
   })
 

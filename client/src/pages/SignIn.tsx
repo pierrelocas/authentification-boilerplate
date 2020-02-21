@@ -63,7 +63,6 @@ export const SignIn: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const { register, control, handleSubmit, errors } = useForm<FormData>()
   const [signIn, { loading }] = useSignInMutation({
-    errorPolicy: 'all',
     update: (store, { data }) => {
       if (!data) {
         return null

@@ -130,7 +130,7 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles()
   const { setNotification } = useContext(NotificationContext)
   const [open, setOpen] = React.useState(true)
-  const { loading: loadingBye } = useByeQuery({
+  const { data: dataBye, loading: loadingBye } = useByeQuery({
     fetchPolicy: 'network-only',
     onError: err => {
       setNotification({
@@ -144,7 +144,7 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const { data, loading, error } = useMeQuery()
   const [logout, { client }] = useSignOutMutation()
   if (loading || loadingBye) {
-    console.log('loading!')
+    return <div>Loading...</div>
   }
   if (error) {
     console.log(error.message)
@@ -171,95 +171,98 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
     history.push('/')
   }
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position='absolute'
-        className={clsx(classes.appBar, open && classes.appBarShift)}
-      >
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge='start'
-            color='inherit'
-            aria-label='open drawer'
-            onClick={handleDrawerOpen}
-            className={clsx(
-              classes.menuButton,
-              open && classes.menuButtonHidden
-            )}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            component='h1'
-            variant='h6'
-            color='inherit'
-            noWrap
-            className={classes.title}
-          >
-            Dashboard
-          </Typography>
-          <Typography>
-            {data && data.me
-              ? `You are logged as : ${data.me.email} | `
-              : 'Guest | '}
-          </Typography>
-          <Button color='inherit' onClick={handleLogout}>
-            Logout
-          </Button>
-          <IconButton color='inherit'>
-            <Badge badgeContent={4} color='secondary'>
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant='permanent'
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
-      </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth='lg' className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
+  if (dataBye && dataBye.bye) {
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar
+          position='absolute'
+          className={clsx(classes.appBar, open && classes.appBarShift)}
+        >
+          <Toolbar className={classes.toolbar}>
+            <IconButton
+              edge='start'
+              color='inherit'
+              aria-label='open drawer'
+              onClick={handleDrawerOpen}
+              className={clsx(
+                classes.menuButton,
+                open && classes.menuButtonHidden
+              )}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              component='h1'
+              variant='h6'
+              color='inherit'
+              noWrap
+              className={classes.title}
+            >
+              Dashboard
+            </Typography>
+            <Typography>
+              {data && data.me
+                ? `You are logged as : ${data.me.email} | `
+                : 'Guest | '}
+            </Typography>
+            <Button color='inherit' onClick={handleLogout}>
+              Logout
+            </Button>
+            <IconButton color='inherit'>
+              <Badge badgeContent={4} color='secondary'>
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant='permanent'
+          classes={{
+            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+          }}
+          open={open}
+        >
+          <div className={classes.toolbarIcon}>
+            <IconButton onClick={handleDrawerClose}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </div>
+          <Divider />
+          <List>{mainListItems}</List>
+          <Divider />
+          <List>{secondaryListItems}</List>
+        </Drawer>
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <Container maxWidth='lg' className={classes.container}>
+            <Grid container spacing={3}>
+              {/* Chart */}
+              <Grid item xs={12} md={8} lg={9}>
+                <Paper className={fixedHeightPaper}>
+                  <Chart />
+                </Paper>
+              </Grid>
+              {/* Recent Deposits */}
+              <Grid item xs={12} md={4} lg={3}>
+                <Paper className={fixedHeightPaper}>
+                  <Deposits />
+                </Paper>
+              </Grid>
+              {/* Recent Orders */}
+              <Grid item xs={12}>
+                <Paper className={classes.paper}>
+                  <Orders />
+                </Paper>
+              </Grid>
             </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
-            <Copyright />
-          </Box>
-        </Container>
-      </main>
-    </div>
-  )
+            <Box pt={4}>
+              <Copyright />
+            </Box>
+          </Container>
+        </main>
+      </div>
+    )
+  }
+  return null
 }

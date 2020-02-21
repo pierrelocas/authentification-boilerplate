@@ -17,15 +17,12 @@ import {
   createRefreshToken,
   createConfirmToken,
   createResetToken
-  // createConfirmToken
 } from './auth'
 import { sendRefreshToken } from './sendRefreshToken'
-import { getConnection } from 'typeorm'
+import { getConnection, InsertResult } from 'typeorm'
 import { isAuth } from './isAuth'
 import { verify } from 'jsonwebtoken'
 import { transporter } from './utils/transporter'
-// import { sendResetPasswordEmail } from './utils/resetPassword'
-// import { sendConfirmationEmail } from './utils/activate'
 
 const {
   CLIENT_HOST,
@@ -106,14 +103,23 @@ export class UserResolver {
     const hashPassword = await hash(password, 12)
 
     // insert will throw exception if dupplicate email.
-    const response = await User.insert({
-      firstname,
-      lastname,
-      email,
-      password: hashPassword
-    })
+    let response: InsertResult
+    try {
+      response = await User.insert({
+        firstname,
+        lastname,
+        email,
+        password: hashPassword
+      })
+    } catch (err) {
+      if (err.message.includes('duplicate key value')) {
+        throw new Error('You are already registered!, please login instead.')
+      } else {
+        throw new Error(err)
+      }
+    }
 
-    const userId = response.identifiers[0]
+    const userId = await response.identifiers[0]
 
     const user = await User.findOne(userId)
 
@@ -157,6 +163,9 @@ export class UserResolver {
     if (!user) {
       throw new Error('User not found!')
     }
+    if (user.confirmed) {
+      throw new Error('Email has already been confirmed.')
+    }
     console.log(user)
     const token = createConfirmToken(user)
 
@@ -164,7 +173,7 @@ export class UserResolver {
     const mailOptions = {
       from: EMAIL_USER,
       to: user.email,
-      subject: 'Reset Password',
+      subject: 'Email Confirmation',
       html: `
       <p>Hello ${user.firstname} ${user.lastname},</p> 
       <p>Please confirm your email by clicking on the following link: </p>
@@ -207,7 +216,7 @@ export class UserResolver {
     if (!user) {
       throw new Error('User not found!')
     }
-    console.log(user)
+    // console.log(user)
     const token = createResetToken(user)
 
     console.log(token)
@@ -230,18 +239,24 @@ export class UserResolver {
       Salutations.`
     }
 
-    console.log(mailOptions)
+    // console.log(mailOptions)
 
     const info = await transporter.sendMail(mailOptions)
-    console.log(`Email confirmation sent: ${info.messageId}`)
+    console.log(info)
+    console.log(
+      `Reset password link has been successfully sent: ${info.messageId}`
+    )
     return true
   }
 
   @Mutation(() => Boolean)
-  async resetPassword(@Arg('token') token: string): Promise<boolean> {
+  async resetPassword(
+    @Arg('token') token: string,
+    @Arg('password') password: string
+  ): Promise<boolean> {
     const tokenPayload: any = verify(token, RESET_TOKEN_SECRET!)
     console.log(tokenPayload)
-    // console.log(token)
+    console.log(password)
     return true
   }
 }

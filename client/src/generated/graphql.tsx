@@ -59,6 +59,7 @@ export type MutationSendResetPasswordEmailArgs = {
 
 
 export type MutationResetPasswordArgs = {
+  password: Scalars['String'],
   token: Scalars['String']
 };
 
@@ -122,7 +123,8 @@ export type MeQuery = (
 );
 
 export type ResetPasswordMutationVariables = {
-  token: Scalars['String']
+  token: Scalars['String'],
+  password: Scalars['String']
 };
 
 
@@ -328,8 +330,8 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
 export const ResetPasswordDocument = gql`
-    mutation ResetPassword($token: String!) {
-  resetPassword(token: $token)
+    mutation ResetPassword($token: String!, $password: String!) {
+  resetPassword(token: $token, password: $password)
 }
     `;
 export type ResetPasswordMutationFn = ApolloReactCommon.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
@@ -348,6 +350,7 @@ export type ResetPasswordMutationFn = ApolloReactCommon.MutationFunction<ResetPa
  * const [resetPasswordMutation, { data, loading, error }] = useResetPasswordMutation({
  *   variables: {
  *      token: // value for 'token'
+ *      password: // value for 'password'
  *   },
  * });
  */
