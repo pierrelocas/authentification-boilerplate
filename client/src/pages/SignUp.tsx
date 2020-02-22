@@ -15,7 +15,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { useForm, Controller } from 'react-hook-form'
 import { useSignUpMutation } from '../generated/graphql'
-import { NotificationContext } from '../App'
+import { NotificationContext } from '../NotificationContext'
 
 interface FormData {
   firstname: string
@@ -64,7 +64,7 @@ export const SignUp: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const [SignUp, { loading }] = useSignUpMutation({
     onError: err => {
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]
@@ -79,8 +79,9 @@ export const SignUp: React.FC<Props> = ({ history }) => {
       const response = await SignUp({
         variables: { firstname, lastname, email, password }
       })
+
       if (response && response.data && response.data.signUp) {
-        setNotification({
+        setNotification!({
           show: true,
           type: 'success',
           message:

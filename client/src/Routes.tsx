@@ -18,7 +18,7 @@ interface Props {}
 export const Routes: React.FC = () => {
   return (
     <BrowserRouter>
-      <div>
+      <>
         <Header />
         {/* {data && data.me && history.push('/dashboard')} */}
         <Switch>
@@ -37,7 +37,7 @@ export const Routes: React.FC = () => {
           <Route exact path='/reset-password' component={ResetPassword} />
           <Route path='/' render={() => <div>404</div>} />
         </Switch>
-      </div>
+      </>
     </BrowserRouter>
   )
 }

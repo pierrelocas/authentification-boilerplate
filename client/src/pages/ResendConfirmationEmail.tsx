@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
 import { useSendConfirmationEmailMutation } from '../generated/graphql'
-import { NotificationContext } from '../App'
+import { NotificationContext } from '../NotificationContext'
 
 type FormData = {
   email: string
@@ -61,7 +61,7 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
   const [sendConfirmationEmail] = useSendConfirmationEmailMutation({
     onError: err => {
       console.log(err)
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]
@@ -83,7 +83,7 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
 
     if (response && response.data && response.data.sendConfirmationEmail) {
       // console.log('Success')
-      setNotification({
+      setNotification!({
         show: true,
         type: 'success',
         message: 'Confirmation link has been sent successfully!'

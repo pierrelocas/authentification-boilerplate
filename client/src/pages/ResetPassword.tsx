@@ -12,8 +12,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
-import { NotificationContext } from '../App'
 import { useSendResetPasswordEmailMutation } from '../generated/graphql'
+import { NotificationContext } from '../NotificationContext'
 
 type FormData = {
   email: string
@@ -59,7 +59,7 @@ export const ResetPassword: React.FC<Props> = ({ history }) => {
   const [sendResetPassword] = useSendResetPasswordEmailMutation({
     onError: err => {
       console.log(err)
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]
@@ -77,7 +77,7 @@ export const ResetPassword: React.FC<Props> = ({ history }) => {
     console.log(email)
     if (response && response.data && response.data.sendResetPasswordEmail) {
       // console.log('Success')
-      setNotification({
+      setNotification!({
         show: true,
         type: 'success',
         message:

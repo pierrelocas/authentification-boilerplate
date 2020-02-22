@@ -19,8 +19,8 @@ import {
   Theme
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import { NotificationContext } from '../App'
 import { useForm } from 'react-hook-form'
+import { NotificationContext } from '../NotificationContext'
 
 interface Props extends RouteComponentProps {}
 
@@ -73,7 +73,7 @@ export const NewPassword: React.FC<Props> = ({ history }) => {
       if (err.message.includes('invalid signature')) {
         message = 'Invalid token, please request another reset password email.'
       }
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: message || err.message.split(':')[1]
@@ -98,7 +98,7 @@ export const NewPassword: React.FC<Props> = ({ history }) => {
       result = await resetPasswordMutation({ variables: { token, password } })
     }
     if (result && result.data && result.data.resetPassword) {
-      setNotification({
+      setNotification!({
         show: true,
         type: 'success',
         message: 'Password was changed successfully!'

@@ -16,7 +16,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
 import { MeQuery, MeDocument, useSignInMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
-import { NotificationContext } from '../App'
+import { NotificationContext } from '../NotificationContext'
 
 type FormData = {
   email: string
@@ -54,6 +54,9 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1)
   },
+  textfield: {
+    marginTop: theme.spacing(4)
+  },
   submit: {
     margin: theme.spacing(3, 0, 2)
   }
@@ -75,7 +78,7 @@ export const SignIn: React.FC<Props> = ({ history }) => {
       })
     },
     onError: err =>
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]
@@ -110,6 +113,7 @@ export const SignIn: React.FC<Props> = ({ history }) => {
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
             fullWidth
+            className={classes.textfield}
             label='Email Address'
             name='email'
             inputRef={register({
@@ -124,6 +128,7 @@ export const SignIn: React.FC<Props> = ({ history }) => {
           />
           <TextField
             fullWidth
+            className={classes.textfield}
             name='password'
             label='Password'
             type='password'
@@ -137,6 +142,7 @@ export const SignIn: React.FC<Props> = ({ history }) => {
           <Controller
             as={
               <FormControlLabel
+                className={classes.textfield}
                 control={<Checkbox color='primary' />}
                 label='Remember me'
               />

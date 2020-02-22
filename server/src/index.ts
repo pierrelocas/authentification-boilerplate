@@ -1,29 +1,30 @@
-import 'dotenv/config'
-import 'reflect-metadata'
-import { createConnection } from 'typeorm'
-import cookieParser from 'cookie-parser'
-import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
-import { buildSchema } from 'type-graphql'
-import { UserResolver } from './UserResolver'
-import { verify } from 'jsonwebtoken'
+import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import { User } from './entity/User'
+import 'dotenv/config'
+import express from 'express'
+import { verify } from 'jsonwebtoken'
+import 'reflect-metadata'
+import { buildSchema } from 'type-graphql'
+import { createConnection } from 'typeorm'
 import { createAccessToken, createRefreshToken } from './auth'
-import { sendRefreshToken } from './sendRefreshToken'
+import { User } from './entity/User'
 import { ErrorInterceptor } from './ErrorInterceptor'
+import { sendRefreshToken } from './sendRefreshToken'
+import { UserResolver } from './UserResolver'
+
+const { CLIENT_HOST, CLIENT_PORT, REFRESH_TOKEN_SECRET } = process.env
 ;(async () => {
   const app = express()
+
   app.use(
     cors({
-      origin: 'http://localhost:3000',
+      origin: `http://${CLIENT_HOST}:${CLIENT_PORT}`,
       credentials: true
     })
   )
 
   app.use('/refresh-token', cookieParser())
-
-  app.get('/', (_req, res) => res.send('hello'))
 
   app.post('/refresh-token', async (req, res) => {
     const token: string = req.cookies.jid
@@ -31,10 +32,10 @@ import { ErrorInterceptor } from './ErrorInterceptor'
       return res.send({ ok: false, accessToken: '' })
     }
 
-    // verify token and create and send an accessToken
+    // verify token, create and send an accessToken
     let payload: any = null
     try {
-      payload = verify(token, process.env.REFRESH_TOKEN_SECRET!)
+      payload = verify(token, REFRESH_TOKEN_SECRET!)
     } catch (err) {
       return res.send({ ok: false, accessToken: '' })
     }
@@ -48,6 +49,7 @@ import { ErrorInterceptor } from './ErrorInterceptor'
     if (user.tokenVersion !== payload.tokenVersion) {
       return res.send({ ok: false, accessToken: '' })
     }
+
     sendRefreshToken(res, createRefreshToken(user))
 
     return res.send({ ok: true, accessToken: createAccessToken(user) })

@@ -30,7 +30,7 @@ import {
 } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { RouteComponentProps } from 'react-router-dom'
-import { NotificationContext } from '../App'
+import { NotificationContext } from '../NotificationContext'
 
 function Copyright() {
   return (
@@ -133,7 +133,7 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const { data: dataBye, loading: loadingBye } = useByeQuery({
     fetchPolicy: 'network-only',
     onError: err => {
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]

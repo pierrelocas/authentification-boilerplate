@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import Box from '@material-ui/core/Box'
 import { setAccessToken } from '../accessToken'
+import { Spinner } from '../Spinner'
 
 function Copyright() {
   return (
@@ -155,7 +156,7 @@ export const Home: React.FC<Props> = ({ history }) => {
   const [logout, { client }] = useSignOutMutation()
   const classes = useStyles()
 
-  if (loading || !data) return <div>Loading...</div>
+  if (loading || !data) return <Spinner />
 
   const handleLogout = async () => {
     console.log('logout')

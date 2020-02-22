@@ -1,17 +1,14 @@
-import React, { useState, useEffect, createContext, Context } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import { Routes } from './Routes'
 import { setAccessToken } from './accessToken'
 import { Notification } from './Notification'
 import { Backdrop } from '@material-ui/core'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles, Theme } from '@material-ui/core/styles'
+import { NotificationType } from './NotificationType'
+import { NotificationContext } from './NotificationContext'
+import { Spinner } from './Spinner'
 
 interface Props {}
-
-interface NotificationType {
-  show: boolean
-  type: 'success' | 'info' | 'warning' | 'error' | undefined
-  message: string
-}
 
 const initialNotification: NotificationType = {
   show: false,
@@ -19,15 +16,17 @@ const initialNotification: NotificationType = {
   message: ''
 }
 
-export const NotificationContext: any = createContext({})
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    backdrop: {
-      zIndex: theme.zIndex.drawer + 1
-    }
-  })
-)
+const useStyles = makeStyles((theme: Theme) => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1
+  },
+  loading: {
+    display: 'flex',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+}))
 
 export const App: React.FC<Props> = () => {
   const classes = useStyles()
@@ -51,7 +50,7 @@ export const App: React.FC<Props> = () => {
   }, [])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <Spinner />
   }
 
   return (
@@ -61,12 +60,14 @@ export const App: React.FC<Props> = () => {
           open={notification.show}
           handleClose={() => setNotification({ ...notification, show: false })}
           type={notification.type}
-          duration={6000}
+          duration={5000}
         >
           {notification.message}
         </Notification>
       </Backdrop>
-      <Routes />
+      <Suspense fallback={<Spinner />}>
+        <Routes />
+      </Suspense>
     </NotificationContext.Provider>
   )
 }

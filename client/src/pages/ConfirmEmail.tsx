@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react'
 import { useParams, RouteComponentProps } from 'react-router-dom'
 import { useConfirmEmailMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
-import { NotificationContext } from '../App'
+import { NotificationContext } from '../NotificationContext'
 
 interface Props extends RouteComponentProps {}
 
@@ -14,7 +14,7 @@ export const ConfirmEmail: React.FC<Props> = ({ history }) => {
   ] = useConfirmEmailMutation({
     onError: err => {
       console.log(err)
-      setNotification({
+      setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]
@@ -23,7 +23,7 @@ export const ConfirmEmail: React.FC<Props> = ({ history }) => {
     },
     update: (_, { data }) => {
       if (data && data.confirmEmail) {
-        setNotification({
+        setNotification!({
           show: true,
           type: 'success',
           message: 'Email successfully confirm. Please login to reflect changes'
