@@ -1,6 +1,5 @@
 import React from 'react'
 import { CircularProgress, makeStyles, Theme } from '@material-ui/core'
-import classes from '*.module.css'
 
 interface Props {}
 

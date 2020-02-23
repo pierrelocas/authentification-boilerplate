@@ -60,7 +60,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
   }
 }))
 
-export const SignUp: React.FC<Props> = ({ history }) => {
+const SignUp: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const [SignUp, { loading }] = useSignUpMutation({
     onError: err => {
@@ -202,3 +202,5 @@ export const SignUp: React.FC<Props> = ({ history }) => {
     </Container>
   )
 }
+
+export default SignUp

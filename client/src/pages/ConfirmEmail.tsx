@@ -3,17 +3,17 @@ import { useParams, RouteComponentProps } from 'react-router-dom'
 import { useConfirmEmailMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { NotificationContext } from '../NotificationContext'
+import { Spinner } from '../Spinner'
 
 interface Props extends RouteComponentProps {}
 
-export const ConfirmEmail: React.FC<Props> = ({ history }) => {
+const ConfirmEmail: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const [
     confirmEmailMutation,
-    { data, error, loading, client }
+    { data, loading, client }
   ] = useConfirmEmailMutation({
     onError: err => {
-      console.log(err)
       setNotification!({
         show: true,
         type: 'error',
@@ -40,15 +40,13 @@ export const ConfirmEmail: React.FC<Props> = ({ history }) => {
     if (token) {
       confirmEmailMutation({ variables: { token } })
     }
-  }, [])
-
-  if (error) {
-    console.log(error)
-  }
+  })
 
   if (loading || !data) {
-    return <div>Confrming email... please wait!</div>
+    return <Spinner />
   }
 
   return null
 }
+
+export default ConfirmEmail

@@ -49,12 +49,15 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1)
   },
+  textfield: {
+    marginTop: theme.spacing(4)
+  },
   submit: {
     margin: theme.spacing(3, 0, 2)
   }
 }))
 
-export const ResetPassword: React.FC<Props> = ({ history }) => {
+const ResetPassword: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const [sendResetPassword] = useSendResetPasswordEmailMutation({
     onError: err => {
@@ -99,6 +102,7 @@ export const ResetPassword: React.FC<Props> = ({ history }) => {
         </Typography>
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
+            className={classes.textfield}
             fullWidth
             label='Email Address'
             name='email'
@@ -141,3 +145,5 @@ export const ResetPassword: React.FC<Props> = ({ history }) => {
     </Container>
   )
 }
+
+export default ResetPassword

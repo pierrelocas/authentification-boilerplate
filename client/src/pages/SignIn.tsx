@@ -17,6 +17,7 @@ import { Container, Theme } from '@material-ui/core'
 import { MeQuery, MeDocument, useSignInMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { NotificationContext } from '../NotificationContext'
+import { Spinner } from '../Spinner'
 
 type FormData = {
   email: string
@@ -62,7 +63,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
   }
 }))
 
-export const SignIn: React.FC<Props> = ({ history }) => {
+const SignIn: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const { register, control, handleSubmit, errors } = useForm<FormData>()
   const [signIn, { loading }] = useSignInMutation({
@@ -87,7 +88,7 @@ export const SignIn: React.FC<Props> = ({ history }) => {
   const classes = useStyles()
 
   if (loading) {
-    console.log('loading')
+    return <Spinner />
   }
 
   const onSubmit = handleSubmit(async ({ email, password, remember }) => {
@@ -180,3 +181,5 @@ export const SignIn: React.FC<Props> = ({ history }) => {
     </Container>
   )
 }
+
+export default SignIn

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Routes } from './Routes'
 import { setAccessToken } from './accessToken'
 import { Notification } from './Notification'
@@ -65,9 +65,7 @@ export const App: React.FC<Props> = () => {
           {notification.message}
         </Notification>
       </Backdrop>
-      <Suspense fallback={<Spinner />}>
-        <Routes />
-      </Suspense>
+      <Routes />
     </NotificationContext.Provider>
   )
 }

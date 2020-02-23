@@ -45,7 +45,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
     marginTop: theme.spacing(8)
   },
   textField: {
-    marginTop: theme.spacing(3)
+    marginTop: theme.spacing(4)
   },
   submit: {
     margin: theme.spacing(5, 0, 2)
@@ -65,7 +65,7 @@ function Copyright() {
   )
 }
 
-export const NewPassword: React.FC<Props> = ({ history }) => {
+const NewPassword: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const [resetPasswordMutation] = useResetPasswordMutation({
     onError: err => {
@@ -83,10 +83,7 @@ export const NewPassword: React.FC<Props> = ({ history }) => {
   })
   const { token } = useParams()
   const classes = useStyles()
-  const { register, handleSubmit, errors, setError, clearError } = useForm<
-    FormData
-  >()
-  // console.log(token)
+  const { register, handleSubmit, errors, setError } = useForm<FormData>()
 
   const onSubmit = handleSubmit(async ({ password, confirmPassword }) => {
     if (password !== confirmPassword) {
@@ -120,6 +117,7 @@ export const NewPassword: React.FC<Props> = ({ history }) => {
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
             fullWidth
+            className={classes.textField}
             label='New Password'
             name='password'
             inputRef={register({
@@ -172,3 +170,5 @@ export const NewPassword: React.FC<Props> = ({ history }) => {
     </Container>
   )
 }
+
+export default NewPassword

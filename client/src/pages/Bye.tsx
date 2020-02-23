@@ -1,11 +1,12 @@
-import React, { useEffect, useContext } from 'react'
+import React from 'react'
 import { useByeQuery } from '../generated/graphql'
 import { RouteComponentProps } from 'react-router-dom'
+import { Spinner } from '../Spinner'
 // import { NotificationContext } from '../App'
 
 interface Props extends RouteComponentProps {}
 
-export const Bye: React.FC<Props> = ({ history }) => {
+const Bye: React.FC<Props> = ({ history }) => {
   // const { setNotification } = useContext(NotificationContext)
   const { loading, data, error } = useByeQuery({
     fetchPolicy: 'network-only',
@@ -32,7 +33,7 @@ export const Bye: React.FC<Props> = ({ history }) => {
   })
 
   if (loading) {
-    console.log('loading')
+    return <Spinner />
   }
 
   if (data && data.bye) {
@@ -44,3 +45,5 @@ export const Bye: React.FC<Props> = ({ history }) => {
     </div>
   )
 }
+
+export default Bye

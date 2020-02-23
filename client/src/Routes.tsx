@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { Home } from './pages/Home'
-import { Bye } from './pages/Bye'
-import { Header } from './Header'
-import { SignIn } from './pages/SignIn'
-import { SignUp } from './pages/SignUp'
-import { ConfirmEmail } from './pages/ConfirmEmail'
-import { NewPassword } from './pages/NewPassword'
-import { ResendConfirmationEmail } from './pages/ResendConfirmationEmail'
-import { ResetPassword } from './pages/ResetPassword'
-import { Dashboard } from './pages/Dashboard'
+import { Spinner } from './Spinner'
+
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const SignUp = lazy(() => import('./pages/SignUp'))
+const SignIn = lazy(() => import('./pages/SignIn'))
+const Bye = lazy(() => import('./pages/Bye'))
+const ConfirmEmail = lazy(() => import('./pages/ConfirmEmail'))
+const NewPassword = lazy(() => import('./pages/NewPassword'))
+const ResendConfirmationEmail = lazy(() =>
+  import('./pages/ResendConfirmationEmail')
+)
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 
 interface Props {}
 /****
@@ -18,9 +21,7 @@ interface Props {}
 export const Routes: React.FC = () => {
   return (
     <BrowserRouter>
-      <>
-        <Header />
-        {/* {data && data.me && history.push('/dashboard')} */}
+      <Suspense fallback={<Spinner />}>
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/signin' component={SignIn} />
@@ -37,7 +38,7 @@ export const Routes: React.FC = () => {
           <Route exact path='/reset-password' component={ResetPassword} />
           <Route path='/' render={() => <div>404</div>} />
         </Switch>
-      </>
+      </Suspense>
     </BrowserRouter>
   )
 }

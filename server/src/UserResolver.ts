@@ -166,10 +166,9 @@ export class UserResolver {
     if (user.confirmed) {
       throw new Error('Email has already been confirmed.')
     }
-    console.log(user)
+
     const token = createConfirmToken(user)
 
-    console.log(token)
     const mailOptions = {
       from: EMAIL_USER,
       to: user.email,
@@ -185,10 +184,9 @@ export class UserResolver {
       Thank you for your registration.`
     }
 
-    console.log(mailOptions)
-
     const info = await transporter.sendMail(mailOptions)
     console.log(`Email confirmation sent: ${info.messageId}`)
+
     return true
   }
 
@@ -216,10 +214,7 @@ export class UserResolver {
     if (!user) {
       throw new Error('User not found!')
     }
-    // console.log(user)
     const token = createResetToken(user)
-
-    console.log(token)
 
     const mailOptions = {
       from: EMAIL_USER,
@@ -239,13 +234,11 @@ export class UserResolver {
       Salutations.`
     }
 
-    // console.log(mailOptions)
-
     const info = await transporter.sendMail(mailOptions)
-    console.log(info)
     console.log(
       `Reset password link has been successfully sent: ${info.messageId}`
     )
+
     return true
   }
 
@@ -255,7 +248,6 @@ export class UserResolver {
     @Arg('password') password: string
   ): Promise<boolean> {
     const { userId }: any = verify(token, RESET_TOKEN_SECRET!)
-    console.log(userId)
     const hashPassword = await hash(password, 12)
     const { affected } = await User.update(
       { id: userId },

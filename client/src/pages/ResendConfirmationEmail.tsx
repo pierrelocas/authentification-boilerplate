@@ -51,22 +51,23 @@ const useStyles = makeStyles<Theme>((theme: Theme) => ({
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1)
   },
+  textfield: {
+    marginTop: theme.spacing(4)
+  },
   submit: {
     margin: theme.spacing(3, 0, 2)
   }
 }))
 
-export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
+const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
   const { setNotification } = useContext(NotificationContext)
   const [sendConfirmationEmail] = useSendConfirmationEmailMutation({
     onError: err => {
-      console.log(err)
       setNotification!({
         show: true,
         type: 'error',
         message: err.message.split(':')[1]
       })
-      console.log(err.message)
       if (err.message.includes('already been confirmed')) {
         history.push('/dashboard')
       }
@@ -76,13 +77,11 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
   const { register, handleSubmit, errors } = useForm<FormData>()
 
   const onSubmit = handleSubmit(async ({ email }) => {
-    // console.log(email)
     const response = await sendConfirmationEmail({
       variables: { email }
     })
 
     if (response && response.data && response.data.sendConfirmationEmail) {
-      // console.log('Success')
       setNotification!({
         show: true,
         type: 'success',
@@ -104,6 +103,7 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
         </Typography>
         <form className={classes.form} noValidate onSubmit={onSubmit}>
           <TextField
+            className={classes.textfield}
             fullWidth
             label='Email Address'
             name='email'
@@ -146,3 +146,5 @@ export const ResendConfirmationEmail: React.FC<Props> = ({ history }) => {
     </Container>
   )
 }
+
+export default ResendConfirmationEmail

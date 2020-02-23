@@ -31,6 +31,7 @@ import {
 import { setAccessToken } from '../accessToken'
 import { RouteComponentProps } from 'react-router-dom'
 import { NotificationContext } from '../NotificationContext'
+import { Spinner } from '../Spinner'
 
 function Copyright() {
   return (
@@ -126,7 +127,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
+const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const classes = useStyles()
   const { setNotification } = useContext(NotificationContext)
   const [open, setOpen] = React.useState(true)
@@ -141,13 +142,15 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
       history.push('/confirm-email')
     }
   })
-  const { data, loading, error } = useMeQuery()
-  const [logout, { client }] = useSignOutMutation()
+  const { data, loading } = useMeQuery()
+  const [logout, { client }] = useSignOutMutation({
+    onError: err => console.log(err),
+    update: () => {
+      client!.resetStore()
+    }
+  })
   if (loading || loadingBye) {
-    return <div>Loading...</div>
-  }
-  if (error) {
-    console.log(error.message)
+    return <Spinner />
   }
   const handleDrawerOpen = () => {
     setOpen(true)
@@ -158,16 +161,14 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
 
   const handleLogout = async () => {
-    console.log('logout')
-    const { data, errors } = await logout()
-    console.log('test', data, errors)
+    await logout()
     setAccessToken('')
-
-    try {
-      await client!.resetStore()
-    } catch (err) {
-      console.log(err)
-    }
+    // Not sure if it is better to reset store in the update fn
+    // try {
+    //   await client!.resetStore()
+    // } catch (err) {
+    //   console.log(err)
+    // }
     history.push('/')
   }
 
@@ -266,3 +267,4 @@ export const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
   }
   return null
 }
+export default Dashboard
