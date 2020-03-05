@@ -11,7 +11,8 @@ import { createAccessToken, createRefreshToken } from './auth'
 import { User } from './entity/User'
 import { ErrorInterceptor } from './ErrorInterceptor'
 import { sendRefreshToken } from './sendRefreshToken'
-import { UserResolver } from './UserResolver'
+import { UserResolver } from './resolvers/UserResolver'
+import { PortfolioResolver } from './resolvers/PortfolioResolver'
 
 const { CLIENT_HOST, CLIENT_PORT, REFRESH_TOKEN_SECRET } = process.env
 ;(async () => {
@@ -59,7 +60,7 @@ const { CLIENT_HOST, CLIENT_PORT, REFRESH_TOKEN_SECRET } = process.env
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [UserResolver, PortfolioResolver],
       globalMiddlewares: [ErrorInterceptor]
     }),
     context: ({ req, res }) => ({ req, res })

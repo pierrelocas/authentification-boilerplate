@@ -19,7 +19,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import Button from '@material-ui/core/Button'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import NotificationsIcon from '@material-ui/icons/Notifications'
-import { mainListItems, secondaryListItems } from '../components/listItems'
+// import { MainListItems, SecondaryListItems } from '../components/listItems'
 import Chart from '../components/Chart'
 import Deposits from '../components/Deposits'
 import Orders from '../components/Orders'
@@ -230,9 +230,9 @@ const Dashboard: React.FC<RouteComponentProps> = ({ history }) => {
             </IconButton>
           </div>
           <Divider />
-          <List>{mainListItems}</List>
+          {/* <List>{MainListItems}</List> */}
           <Divider />
-          <List>{secondaryListItems}</List>
+          {/* <List>{SecondaryListItems}</List> */}
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />

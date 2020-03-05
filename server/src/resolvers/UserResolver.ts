@@ -10,19 +10,19 @@ import {
   UseMiddleware
 } from 'type-graphql'
 import { hash, compare } from 'bcryptjs'
-import { User } from './entity/User'
-import { MyContext } from './MyContext'
+import { User } from '../entity/User'
+import { MyContext } from '../MyContext'
 import {
   createAccessToken,
   createRefreshToken,
   createConfirmToken,
   createResetToken
-} from './auth'
-import { sendRefreshToken } from './sendRefreshToken'
+} from '../auth'
+import { sendRefreshToken } from '../sendRefreshToken'
 import { getConnection, InsertResult } from 'typeorm'
-import { isAuth } from './isAuth'
+import { isAuth } from '../isAuth'
 import { verify } from 'jsonwebtoken'
-import { transporter } from './utils/transporter'
+import { transporter } from '../utils/transporter'
 
 const {
   CLIENT_HOST,

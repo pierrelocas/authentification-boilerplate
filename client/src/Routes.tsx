@@ -2,6 +2,8 @@ import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { Home } from './pages/Home'
 import { Spinner } from './Spinner'
+import { Layout } from './components/Layout'
+import { AuthRoute } from './AuthRoutes'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const SignUp = lazy(() => import('./pages/SignUp'))
@@ -26,8 +28,70 @@ export const Routes: React.FC = () => {
           <Route exact path='/' component={Home} />
           <Route exact path='/signin' component={SignIn} />
           <Route exact path='/signup' component={SignUp} />
-          <Route exact path='/dashboard' component={Dashboard} />
-          <Route exact path='/bye' component={Bye} />
+          <AuthRoute
+            exact
+            path='/dashboard'
+            render={props => (
+              <Layout title='Dashboard' {...props}>
+                <div>Dashboard</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute
+            exact
+            path='/portfolios'
+            render={props => (
+              <Layout title='Portfolios' {...props}>
+                <div>Portfolios</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute
+            exact
+            path='/positions'
+            render={props => (
+              <Layout title='Positions' {...props}>
+                <div>Positions</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute
+            exact
+            path='/transactions'
+            render={props => (
+              <Layout title='Transactions' {...props}>
+                <div>Transactions</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute
+            exact
+            path='/statistics'
+            render={props => (
+              <Layout title='Statistics' {...props}>
+                <div>Statistics</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute
+            exact
+            path='/profile'
+            render={props => (
+              <Layout title='Profile' {...props}>
+                <div>Profile</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute
+            exact
+            path='/market'
+            render={props => (
+              <Layout title='Market' {...props}>
+                <div>Market</div>
+              </Layout>
+            )}
+          />
+          <AuthRoute exact path='/bye' component={Bye} />
           <Route exact path='/confirm-email/:token' component={ConfirmEmail} />
           <Route exact path='/reset-password/:token' component={NewPassword} />
           <Route
