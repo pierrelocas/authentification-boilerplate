@@ -13,6 +13,7 @@ import { ErrorInterceptor } from './ErrorInterceptor'
 import { sendRefreshToken } from './sendRefreshToken'
 import { UserResolver } from './resolvers/UserResolver'
 import { PortfolioResolver } from './resolvers/PortfolioResolver'
+import { TransactionResolver } from './resolvers/TransactionResolver'
 
 const { CLIENT_HOST, CLIENT_PORT, REFRESH_TOKEN_SECRET } = process.env
 ;(async () => {
@@ -60,7 +61,7 @@ const { CLIENT_HOST, CLIENT_PORT, REFRESH_TOKEN_SECRET } = process.env
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, PortfolioResolver],
+      resolvers: [UserResolver, PortfolioResolver, TransactionResolver],
       globalMiddlewares: [ErrorInterceptor]
     }),
     context: ({ req, res }) => ({ req, res })
