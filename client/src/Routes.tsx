@@ -4,6 +4,7 @@ import { Home } from './pages/Home'
 import { Spinner } from './Spinner'
 import { Layout } from './components/Layout'
 import { AuthRoute } from './AuthRoutes'
+import Portfolios from './pages/Porfolios'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const SignUp = lazy(() => import('./pages/SignUp'))
@@ -19,6 +20,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 interface Props {}
 /****
  * TODO: Need to create 404 page
+ * Maybe pass down user, portfolios and transactions to Layout and pages
  */
 export const Routes: React.FC = () => {
   return (
@@ -28,29 +30,26 @@ export const Routes: React.FC = () => {
           <Route exact path='/' component={Home} />
           <Route exact path='/signin' component={SignIn} />
           <Route exact path='/signup' component={SignUp} />
-          <AuthRoute
-            exact
-            path='/dashboard'
-            render={props => (
-              <Layout title='Dashboard' {...props}>
-                <div>Dashboard</div>
-              </Layout>
+          <AuthRoute exact path='/dashboard'>
+            <Layout title='Dashboard'>
+              <Dashboard />}
+            </Layout>
             )}
-          />
-          <AuthRoute
-            exact
-            path='/portfolios'
-            render={props => (
-              <Layout title='Portfolios' {...props}>
-                <div>Portfolios</div>
-              </Layout>
-            )}
-          />
-          <AuthRoute
+          </AuthRoute>
+          <AuthRoute exact path='/portfolios'>
+            <Layout title='Portfolios'>
+              <Portfolios />
+            </Layout>
+          </AuthRoute>
+          {/* <AuthRoute
             exact
             path='/positions'
             render={props => (
-              <Layout title='Positions' {...props}>
+              <Layout
+                title='Positions'
+                {...props}
+                layoutData={'some other data'}
+              >
                 <div>Positions</div>
               </Layout>
             )}
@@ -59,7 +58,11 @@ export const Routes: React.FC = () => {
             exact
             path='/transactions'
             render={props => (
-              <Layout title='Transactions' {...props}>
+              <Layout
+                title='Transactions'
+                {...props}
+                layoutData={'some other data'}
+              >
                 <div>Transactions</div>
               </Layout>
             )}
@@ -68,7 +71,11 @@ export const Routes: React.FC = () => {
             exact
             path='/statistics'
             render={props => (
-              <Layout title='Statistics' {...props}>
+              <Layout
+                title='Statistics'
+                {...props}
+                layoutData={'some other data'}
+              >
                 <div>Statistics</div>
               </Layout>
             )}
@@ -77,7 +84,7 @@ export const Routes: React.FC = () => {
             exact
             path='/profile'
             render={props => (
-              <Layout title='Profile' {...props}>
+              <Layout title='Profile' {...props} layoutData={'some other data'}>
                 <div>Profile</div>
               </Layout>
             )}
@@ -86,11 +93,11 @@ export const Routes: React.FC = () => {
             exact
             path='/market'
             render={props => (
-              <Layout title='Market' {...props}>
+              <Layout title='Market' {...props} layoutData={'some other data'}>
                 <div>Market</div>
               </Layout>
             )}
-          />
+          /> */}
           <AuthRoute exact path='/bye' component={Bye} />
           <Route exact path='/confirm-email/:token' component={ConfirmEmail} />
           <Route exact path='/reset-password/:token' component={NewPassword} />

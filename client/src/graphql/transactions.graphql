@@ -1,0 +1,10 @@
+query Transactions($portfolioId: Int) {
+  transactions(portfolioId: $portfolioId) {
+    id
+    portfolioId
+    stock
+    quantity
+    price
+    commission
+  }
+}

@@ -34,7 +34,6 @@ export class TransactionResolver {
   // must check if belongs to user
   /**
    * Implement isAuth middleware and get userId from context.
-   * (remove user Id as a parameter)
    */
   @Query(() => Transaction, { nullable: true })
   async transaction(
@@ -44,10 +43,16 @@ export class TransactionResolver {
   }
   /**
    * Implement isAuth middleware and get userId from context.
-   * (remove user Id as a parameter)
    */
   @Query(() => [Transaction])
-  async transactions(@Arg('portfolioId') portfolioId: number): Promise<any> {
+  async transactions(
+    @Arg('portfolioId', () => Int, { nullable: true })
+    portfolioId: number | null
+  ): Promise<any> {
+    // First if portfolio provided insure it belongs to loggedIn user
+    // else retrive favorite portfolio
+    // else get first portfolio
+    portfolioId = portfolioId || 7
     const transactions = await Transaction.find({
       where: { portfolioId },
       relations: ['portfolio']

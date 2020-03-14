@@ -5,10 +5,14 @@ import {
   Mutation,
   Field,
   InputType,
-  Int
+  Int,
+  Ctx,
+  UseMiddleware
 } from 'type-graphql'
 import { InsertResult } from 'typeorm'
 import { Portfolio } from '../entity/Portfolio'
+import { MyContext } from '../MyContext'
+import { isAuth } from '../isAuth'
 // import { User } from '../entity/User'
 
 @InputType()
@@ -49,9 +53,11 @@ export class PortfolioResolver {
    * (remove user Id as a parameter)
    */
   @Query(() => [Portfolio])
-  async portfolios(@Arg('userId') userId: number): Promise<any> {
+  @UseMiddleware(isAuth)
+  async portfolios(@Ctx() { payload }: MyContext): Promise<any> {
+    console.log({ payload })
     const portfolios = await Portfolio.find({
-      where: { userId },
+      where: { userId: payload!.userId },
       relations: ['user']
     })
     return portfolios
@@ -63,7 +69,7 @@ export class PortfolioResolver {
    */
   @Mutation(() => Boolean)
   async createPortfolio(
-    @Arg('userId') userId: number,
+    @Arg('userId', () => Int) userId: number,
     @Arg('name') name: string,
     @Arg('exchange') exchange: string,
     @Arg('currency') currency: string,

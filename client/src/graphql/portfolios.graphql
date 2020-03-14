@@ -1,0 +1,10 @@
+query Portfolios {
+  portfolios {
+    id
+    name
+    currency
+    exchange
+    favorite
+    userId
+  }
+}

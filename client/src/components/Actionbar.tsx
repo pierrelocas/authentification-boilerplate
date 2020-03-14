@@ -48,18 +48,26 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0,
     margin: 'auto',
     paddingLeft: theme.spacing(2)
+  },
+  zeroSpacingTop: {
+    marginTop: 0,
+    padingTop: 0
   }
 }))
 
-export default function Actionbar(props: any) {
-  const { setActionBarOpen, actionBarOpen } = props
+interface Props {
+  setActionBarOpen: any
+  actionBarOpen: any
+}
 
-  const initialExpanded = {
-    portfolio: false,
-    edit: false,
-    transaction: false,
-    setting: false
-  }
+const initialExpanded = {
+  portfolio: false,
+  edit: false,
+  transaction: false,
+  setting: false
+}
+export const Actionbar: React.FC<Props> = (props: any) => {
+  const { setActionBarOpen, actionBarOpen } = props
 
   const classes = useStyles()
   const [expanded, setExpanded] = useState(initialExpanded)
@@ -70,7 +78,7 @@ export default function Actionbar(props: any) {
   }
 
   const handleChange = (panel: string) => (
-    _: React.ChangeEvent<{}>,
+    _event: any,
     isExpanded: boolean
   ) => {
     if (isExpanded && !actionBarOpen) handleActionBarOpen()
@@ -102,12 +110,8 @@ export default function Actionbar(props: any) {
           </IconButton>
           <Typography className={classes.heading}>Portfolio</Typography>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <PortfolioAction
-          // portfolios={portfolios}
-          // activePortfolio={activePortfolio}
-          // handlePortfolioChange={handlePortfolioChange}
-          />
+        <ExpansionPanelDetails className={classes.zeroSpacingTop}>
+          <PortfolioAction />
         </ExpansionPanelDetails>
       </ExpansionPanel>
       <ExpansionPanel
