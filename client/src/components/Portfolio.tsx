@@ -1,10 +1,10 @@
-import React from 'react'
-
-import clsx from 'clsx'
+import { IconButton, Paper, Typography } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
-import Link from '@material-ui/core/Link'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+import EditIcon from '@material-ui/icons/Edit'
+import DeleteIcon from '@material-ui/icons/Delete'
+import clsx from 'clsx'
+import React, { useContext } from 'react'
+import { DataStateContext, DataDispatchContext } from '../contexts'
 import Title from './Title'
 
 const useStyles = makeStyles(theme => ({
@@ -25,18 +25,22 @@ const useStyles = makeStyles(theme => ({
     borderBottomStyle: 'solid',
     borderBottomWidth: 3,
     borderBottomColor: theme.palette.primary.main
+  },
+  iconsSection: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  actionIcon: {
+    marginLeft: '2px'
   }
 }))
 
-export default function Portfolio(props: any) {
-  const {
-    id,
-    name,
-    exchange,
-    currency,
-    activePortfolio,
-    handlePortfolioChange
-  } = props
+interface Props {}
+
+export const Portfolio: React.FC<Props> = (props: any) => {
+  const dataState: any = useContext(DataStateContext)
+  const dataDispatch: any = useContext(DataDispatchContext)
+  const { id, name, exchange, currency } = props
   const classes = useStyles()
 
   return (
@@ -44,11 +48,32 @@ export default function Portfolio(props: any) {
       className={clsx(
         classes.paper,
         classes.fixedHeight,
-        id === activePortfolio && classes.active
+        id === dataState.activePortfolio && classes.active
       )}
       elevation={5}
-      onClick={() => handlePortfolioChange(id)}
+      onClick={() =>
+        dataDispatch({
+          type: 'setActivePortfolio',
+          payload: id
+        })
+      }
     >
+      <div className={classes.iconsSection}>
+        <IconButton
+          size='small'
+          onClick={() => console.log('go to edit')}
+          className={classes.actionIcon}
+        >
+          <EditIcon color='action' />
+        </IconButton>
+        <IconButton
+          size='small'
+          onClick={() => console.log('Delete')}
+          className={classes.actionIcon}
+        >
+          <DeleteIcon color='action' />
+        </IconButton>
+      </div>
       <Title>{name}</Title>
       <Typography component='p' variant='h4'>
         $3,024.00

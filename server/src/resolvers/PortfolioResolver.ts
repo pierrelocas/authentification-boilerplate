@@ -77,12 +77,14 @@ export class PortfolioResolver {
   ): Promise<Boolean> {
     let response: InsertResult
 
+    // @TODO : Handle favorite/default portfolio, first one should be true, the subsequent ones should be false
+    const portfolios = await Portfolio.find()
     try {
       response = await Portfolio.insert({
         name,
         exchange,
         currency,
-        favorite,
+        favorite: portfolios.length ? true : favorite,
         userId
       })
     } catch (err) {

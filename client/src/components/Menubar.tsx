@@ -1,13 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
-
 import Drawer from '@material-ui/core/Drawer'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
-
 import { MenuItem, mainMenuItems, secondaryListItems } from './menubarItems'
 import { MENUBAR_WIDTH } from '../config'
 import {
@@ -17,10 +15,9 @@ import {
   ListItemText
 } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
+import { LayoutStateContext, LayoutDispatchContext } from '../contexts'
 
 interface Props {
-  handleDrawerClose: any
-  open: any
   title: string
 }
 
@@ -73,19 +70,23 @@ const MenubarItem: React.FC<MenuItemProps> = ({ name, path, icon, title }) => {
 }
 
 // SHOULD INCLUDE LISTITMES FILE DIRECTLY IN HERE
-export const Menubar: React.FC<Props> = props => {
-  const { handleDrawerClose, open, title } = props
+export const Menubar: React.FC<Props> = ({ title }) => {
+  const state: any = useContext(LayoutStateContext)
+  const dispatch: any = useContext(LayoutDispatchContext)
   const classes = useStyles()
   return (
     <Drawer
       variant='permanent'
       classes={{
-        paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose)
+        paper: clsx(
+          classes.drawerPaper,
+          !state.openMenuBar && classes.drawerPaperClose
+        )
       }}
-      open={open}
+      open={state.openMenuBar}
     >
       <div className={classes.toolbarIcon}>
-        <IconButton onClick={handleDrawerClose}>
+        <IconButton onClick={() => dispatch({ type: 'toggleMenuBar' })}>
           <ChevronLeftIcon />
         </IconButton>
       </div>

@@ -1,14 +1,14 @@
 import React, { useContext } from 'react'
-import { DataContext } from '../components/Layout'
+import { DataStateContext } from '../contexts'
 
 interface Props {}
 
 const Dashboard: React.FC<Props> = props => {
-  const data = useContext(DataContext)
+  const dataState: any = useContext(DataStateContext)
   return (
     <div>
       <div>Dashboard...</div>
-      <div>{JSON.stringify(data, null, 2)} </div>
+      <div>{JSON.stringify(dataState, null, 2)} </div>
     </div>
   )
 }

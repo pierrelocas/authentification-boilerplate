@@ -32,9 +32,8 @@ export const Routes: React.FC = () => {
           <Route exact path='/signup' component={SignUp} />
           <AuthRoute exact path='/dashboard'>
             <Layout title='Dashboard'>
-              <Dashboard />}
+              <Dashboard />
             </Layout>
-            )}
           </AuthRoute>
           <AuthRoute exact path='/portfolios'>
             <Layout title='Portfolios'>

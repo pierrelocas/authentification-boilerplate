@@ -21,11 +21,10 @@ import { useSignOutMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { useHistory } from 'react-router-dom'
 import { NotificationContext } from '../NotificationContext'
+import { LayoutStateContext, LayoutDispatchContext } from '../contexts'
 
 interface Props {
-  handleDrawerOpen: () => void
   title: string
-  open: boolean
 }
 
 const useStyles = makeStyles(theme => ({
@@ -98,7 +97,9 @@ const useStyles = makeStyles(theme => ({
 
 export const Topbar: React.FC<Props> = props => {
   const { setNotification } = useContext(NotificationContext)
-  const { handleDrawerOpen, title, open } = props
+  const state: any = useContext(LayoutStateContext)
+  const dispatch: any = useContext(LayoutDispatchContext)
+  const { title } = props
   const history = useHistory()
   const [logout, { client }] = useSignOutMutation({
     onError: err =>
@@ -145,15 +146,18 @@ export const Topbar: React.FC<Props> = props => {
   return (
     <AppBar
       position='absolute'
-      className={clsx(classes.appBar, open && classes.appBarShift)}
+      className={clsx(classes.appBar, state.openMenuBar && classes.appBarShift)}
     >
       <Toolbar className={classes.toolbar}>
         <IconButton
           edge='start'
           color='inherit'
           aria-label='open drawer'
-          onClick={handleDrawerOpen}
-          className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+          onClick={() => dispatch({ type: 'toggleMenuBar' })}
+          className={clsx(
+            classes.menuButton,
+            state.openMenuBar && classes.menuButtonHidden
+          )}
         >
           <MenuIcon />
         </IconButton>

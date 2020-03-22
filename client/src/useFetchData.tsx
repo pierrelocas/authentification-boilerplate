@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   usePortfoliosQuery,
   useTransactionsQuery,
@@ -10,35 +10,49 @@ interface Props {
 }
 
 export const useFetchData: any = (
-  portfolioId: any = 7
-): { loading: boolean; data: any } => {
-  let loading: boolean = true
-  let data: any = { me: null, portfolios: null, transactions: null }
-  console.log(portfolioId)
+  portfolioId: any
+): { loading: boolean; data: any; error: any } => {
+  let loading = true
+  let error = null
+  let data: any = {
+    me: null,
+    portfolios: null,
+    transactions: null
+  }
+
   const { data: meData, loading: meLoading } = useMeQuery({
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'network-only',
+    onError: err => {
+      console.log(err)
+      error = err
+    }
   })
+
   const {
     loading: portfolioLoading,
     data: portfoliosData
   } = usePortfoliosQuery({
-    onError: err => console.log(err)
+    onError: err => {
+      console.log(err)
+      error = err
+    }
   })
+
   const {
     loading: transactionsLoading,
     data: transactionsData
   } = useTransactionsQuery({
     variables: { portfolioId },
-    onError: err => console.log(err)
+    onError: err => {
+      console.log(err)
+      error = err
+    }
   })
 
   if (
-    meData &&
-    meData.me &&
-    portfoliosData &&
-    portfoliosData.portfolios &&
-    transactionsData &&
-    transactionsData.transactions
+    meData?.me &&
+    portfoliosData?.portfolios &&
+    transactionsData?.transactions
   ) {
     data.me = meData.me
     data.portfolios = portfoliosData.portfolios
@@ -46,5 +60,5 @@ export const useFetchData: any = (
     loading = false
   }
 
-  return { loading, data }
+  return { loading, error, data }
 }

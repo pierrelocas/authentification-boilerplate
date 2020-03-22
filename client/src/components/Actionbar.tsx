@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
@@ -22,6 +22,7 @@ import TransactionAction from './TransactionAction'
 import { EditAction } from './EditAction'
 
 import { ACTIONBAR_WIDTH } from '../config'
+import { LayoutStateContext, LayoutDispatchContext } from '../contexts'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,8 +57,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
-  setActionBarOpen: any
-  actionBarOpen: any
+  title: string
 }
 
 const initialExpanded = {
@@ -66,40 +66,36 @@ const initialExpanded = {
   transaction: false,
   setting: false
 }
-export const Actionbar: React.FC<Props> = (props: any) => {
-  const { setActionBarOpen, actionBarOpen } = props
+export const Actionbar: React.FC<Props> = () => {
+  const state: any = useContext(LayoutStateContext)
+  const dispatch: any = useContext(LayoutDispatchContext)
 
   const classes = useStyles()
-  const [expanded, setExpanded] = useState(initialExpanded)
-
-  const handleActionBarOpen = () => {
-    if (actionBarOpen) setExpanded(initialExpanded)
-    setActionBarOpen((previousState: any) => !previousState)
-  }
-
-  const handleChange = (panel: string) => (
-    _event: any,
-    isExpanded: boolean
-  ) => {
-    if (isExpanded && !actionBarOpen) handleActionBarOpen()
-    setExpanded({ ...expanded, [panel]: isExpanded })
-  }
 
   return (
     <div className={classes.root}>
       <Paper
-        className={clsx(classes.paper, !actionBarOpen && classes.paperCompact)}
+        className={clsx(
+          classes.paper,
+          !state.openActionBar && classes.paperCompact
+        )}
       >
         <Typography component='h2' variant='h6' color='primary'>
           Actions
         </Typography>
-        <IconButton size='small' color='primary' onClick={handleActionBarOpen}>
-          {actionBarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        <IconButton
+          size='small'
+          color='primary'
+          onClick={() => dispatch({ type: 'toggleActionBar' })}
+        >
+          {state.openActionBar ? <ChevronRightIcon /> : <ChevronLeftIcon />}
         </IconButton>
       </Paper>
       <ExpansionPanel
-        expanded={expanded.portfolio}
-        onChange={handleChange('portfolio')}
+        expanded={state.actionSection.portfolio}
+        onChange={() =>
+          dispatch({ type: 'toggleActionSection', payload: 'portfolio' })
+        }
       >
         <ExpansionPanelSummary
           className={classes.expSummary}
@@ -108,15 +104,20 @@ export const Actionbar: React.FC<Props> = (props: any) => {
           <IconButton size='small'>
             <SwapHorizontalBold color='action' />
           </IconButton>
-          <Typography className={classes.heading}>Portfolio</Typography>
+          <Typography className={classes.heading}>Portfolios</Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.zeroSpacingTop}>
           <PortfolioAction />
         </ExpansionPanelDetails>
       </ExpansionPanel>
       <ExpansionPanel
-        expanded={expanded.transaction}
-        onChange={handleChange('transaction')}
+        expanded={state.actionSection.transaction}
+        onChange={() =>
+          dispatch({
+            type: 'toggleActionSection',
+            payload: 'transaction'
+          })
+        }
       >
         <ExpansionPanelSummary
           className={classes.expSummary}
@@ -137,7 +138,15 @@ export const Actionbar: React.FC<Props> = (props: any) => {
           />
         </ExpansionPanelDetails>
       </ExpansionPanel>
-      <ExpansionPanel expanded={expanded.edit} onChange={handleChange('edit')}>
+      <ExpansionPanel
+        expanded={state.actionSection.edit}
+        onChange={() =>
+          dispatch({
+            type: 'toggleActionSection',
+            payload: 'edit'
+          })
+        }
+      >
         <ExpansionPanelSummary
           className={classes.expSummary}
           expandIcon={<ExpandMoreIcon />}
@@ -152,8 +161,13 @@ export const Actionbar: React.FC<Props> = (props: any) => {
         </ExpansionPanelDetails>
       </ExpansionPanel>
       <ExpansionPanel
-        expanded={expanded.setting}
-        onChange={handleChange('setting')}
+        expanded={state.actionSection.setting}
+        onChange={() =>
+          dispatch({
+            type: 'toggleActionSection',
+            payload: 'setting'
+          })
+        }
       >
         <ExpansionPanelSummary
           className={classes.expSummary}

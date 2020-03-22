@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
-import { DataContext, ActivePortfolioContext } from './Layout'
+import { DataContext, DataStateContext, DataDispatchContext } from '../contexts'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -32,8 +32,8 @@ const useStyles = makeStyles(theme => ({
 interface Props {}
 
 export const PortfolioAction: React.FC<Props> = () => {
-  const data: any = useContext(DataContext)
-  const portfolioContext: any = useContext(ActivePortfolioContext)
+  const dataState: any = useContext(DataStateContext)
+  const dataDispatch: any = useContext(DataDispatchContext)
   const classes = useStyles()
 
   return (
@@ -43,16 +43,19 @@ export const PortfolioAction: React.FC<Props> = () => {
           Portfolio
         </InputLabel>
         <Select
-          value={portfolioContext.portfolioId || ''}
+          value={dataState.activePortfolio || ''}
           input={<Input name='portfolio' id='portfolio-select' />}
           displayEmpty
           name='portfolio'
           className={classes.selectEmpty}
           onChange={event =>
-            portfolioContext.setPortfolioId(event.target.value)
+            dataDispatch({
+              type: 'setActivePortfolio',
+              payload: event.target.value
+            })
           }
         >
-          {data.portfolios.map((p: any) => (
+          {dataState.portfolios.map((p: any) => (
             <MenuItem key={p.id} value={p.id}>
               {p.name}
             </MenuItem>

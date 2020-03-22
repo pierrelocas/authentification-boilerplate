@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useReducer, useEffect } from 'react'
 import clsx from 'clsx'
 import { Topbar } from './Topbar'
 import { Menubar } from './Menubar'
@@ -8,14 +8,21 @@ import { ACTIONBAR_WIDTH, ACTIONBAR_COMPACT_WIDTH } from '../config'
 import { RouteComponentProps } from 'react-router-dom'
 import { Spinner } from '../Spinner'
 import { useFetchData } from '../useFetchData'
+import {
+  LayoutDispatchContext,
+  LayoutStateContext,
+  ActivePortfolioContext,
+  DataContext,
+  DataDispatchContext,
+  DataStateContext
+} from '../contexts'
+import { DataReducer, initialDataState } from '../reducers/DataReducer'
+import { LayoutReducer, intialLayoutState } from '../reducers/LayoutReducer'
 
-interface Props extends RouteComponentProps {
+interface Props {
   title: string
-  children: any
+  children?: any
 }
-
-export const DataContext = createContext({})
-export const ActivePortfolioContext = createContext({})
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,56 +65,67 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const Layout: React.FC<any> = ({ title, children }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [actionBarOpen, setActionBarOpen] = useState(true)
-  // when null is provided to fetch transaction it select the favorite portfolio or the first one
-  const [portfolioId, setPortfolioId] = useState<any>(null)
-  const { loading, data } = useFetchData(portfolioId)
+export const Layout: React.FC<Props> = ({ title, children }) => {
+  const [layoutState, layoutDispatch] = useReducer(
+    LayoutReducer,
+    intialLayoutState
+  )
+  const [dataState, dataDispatch] = useReducer(DataReducer, initialDataState)
 
-  console.log({ loading, data })
+  // when null is provided to fetch transaction it select the favorite portfolio or the first one
+  const { loading, error, data } = useFetchData(dataState.activePortfolio)
+
+  // Fectch initial data using the default/favorite portfolio
+  // Check if useEffect could be inside useFetchData and not returning anything.
+  useEffect(() => {
+    console.log('in effect')
+    ;(async () =>
+      await dataDispatch({
+        type: 'setData',
+        payload: { loading, data }
+      }))()
+  }, [loading, dataState.activePortfolio])
+
   const classes = useStyles()
-  if (loading) {
+
+  if (dataState.loading) {
     return <Spinner />
   }
+
+  if (error) {
+    console.log(error.message)
+  }
   return (
-    <ActivePortfolioContext.Provider value={{ portfolioId, setPortfolioId }}>
-      <DataContext.Provider value={data}>
-        <div className={classes.root}>
-          <CssBaseline />
-          <Topbar
-            handleDrawerOpen={() => setDrawerOpen(true)}
-            title={title}
-            open={drawerOpen}
-          />
-          <Menubar
-            handleDrawerClose={() => setDrawerOpen(false)}
-            open={drawerOpen}
-            title={title}
-          />
-          <main
-            className={clsx(
-              classes.content,
-              !actionBarOpen && classes.contentWide
-            )}
-          >
-            <div className={classes.appBarSpacer} />
-            {children}
-          </main>
-          <section
-            className={clsx(
-              classes.actionBar,
-              !actionBarOpen && classes.actionBarClosed
-            )}
-          >
-            <div className={classes.appBarSpacer} />
-            <Actionbar
-              setActionBarOpen={setActionBarOpen}
-              actionBarOpen={actionBarOpen}
-            />
-          </section>
-        </div>
-      </DataContext.Provider>
-    </ActivePortfolioContext.Provider>
+    <LayoutDispatchContext.Provider value={layoutDispatch}>
+      <LayoutStateContext.Provider value={layoutState}>
+        <DataDispatchContext.Provider value={dataDispatch}>
+          <DataStateContext.Provider value={dataState}>
+            <div className={classes.root}>
+              <CssBaseline />
+              <Topbar title={title} />
+              <Menubar title={title} />
+              <main
+                className={clsx(
+                  classes.content,
+                  !layoutState.openActionBar && classes.contentWide
+                )}
+              >
+                <div className={classes.appBarSpacer} />
+                {children}
+              </main>
+              <section
+                className={clsx(
+                  classes.actionBar,
+                  !layoutState.openActionBar && classes.actionBarClosed
+                )}
+              >
+                <div className={classes.appBarSpacer} />
+                <Actionbar title={title} />
+              </section>
+            </div>
+          </DataStateContext.Provider>
+        </DataDispatchContext.Provider>
+      </LayoutStateContext.Provider>
+    </LayoutDispatchContext.Provider>
   )
 }
