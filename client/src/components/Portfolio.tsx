@@ -5,6 +5,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
 import React, { useContext } from 'react'
 import { DataStateContext, DataDispatchContext } from '../contexts'
+import { LayoutDispatchContext } from '../contexts'
 import Title from './Title'
 
 const useStyles = makeStyles(theme => ({
@@ -88,9 +89,6 @@ export const Portfolio: React.FC<Props> = (props: any) => {
         {currency}
       </Typography>
       <div>
-        {/* <Link color="primary" href="javascript:void(0)">
-          View balance
-        </Link> */}
         <h4>view balance</h4>
       </div>
     </Paper>

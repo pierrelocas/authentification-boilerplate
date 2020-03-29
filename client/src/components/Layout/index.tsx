@@ -1,26 +1,24 @@
 import React, { useState, createContext, useReducer, useEffect } from 'react'
 import clsx from 'clsx'
 import { Topbar } from './Topbar'
-import { Menubar } from './Menubar'
-import { Actionbar } from './Actionbar'
+import { Menubar } from './Menu'
+import { Actionbar } from './Action'
 import { CssBaseline, makeStyles, Theme, createStyles } from '@material-ui/core'
-import { ACTIONBAR_WIDTH, ACTIONBAR_COMPACT_WIDTH } from '../config'
-import { RouteComponentProps } from 'react-router-dom'
-import { Spinner } from '../Spinner'
-import { useFetchData } from '../useFetchData'
+import { ACTIONBAR_WIDTH, ACTIONBAR_COMPACT_WIDTH } from '../../config'
+import { Spinner } from '../../Spinner'
+import { useFetchData } from '../../useFetchData'
 import {
   LayoutDispatchContext,
   LayoutStateContext,
-  ActivePortfolioContext,
-  DataContext,
   DataDispatchContext,
   DataStateContext
-} from '../contexts'
-import { DataReducer, initialDataState } from '../reducers/DataReducer'
-import { LayoutReducer, intialLayoutState } from '../reducers/LayoutReducer'
+} from '../../contexts'
+import { DataReducer, initialDataState } from '../../reducers/DataReducer'
+import { LayoutReducer, intialLayoutState } from '../../reducers/LayoutReducer'
 
 interface Props {
   title: string
+  page: string
   children?: any
 }
 
@@ -65,20 +63,24 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export const Layout: React.FC<Props> = ({ title, children }) => {
+export const Layout: React.FC<Props> = ({ title, page, children }) => {
   const [layoutState, layoutDispatch] = useReducer(
     LayoutReducer,
     intialLayoutState
   )
   const [dataState, dataDispatch] = useReducer(DataReducer, initialDataState)
 
-  // when null is provided to fetch transaction it select the favorite portfolio or the first one
+  // when null is provided to fetch transaction it select the favorite portfolio
   const { loading, error, data } = useFetchData(dataState.activePortfolio)
 
-  // Fectch initial data using the default/favorite portfolio
-  // Check if useEffect could be inside useFetchData and not returning anything.
   useEffect(() => {
-    console.log('in effect')
+    ;(() => {
+      layoutDispatch({ type: 'setTitle', payload: title })
+      layoutDispatch({ type: 'setPage', payload: page })
+    })()
+  }, [title, page])
+
+  useEffect(() => {
     ;(async () =>
       await dataDispatch({
         type: 'setData',
@@ -102,8 +104,8 @@ export const Layout: React.FC<Props> = ({ title, children }) => {
           <DataStateContext.Provider value={dataState}>
             <div className={classes.root}>
               <CssBaseline />
-              <Topbar title={title} />
-              <Menubar title={title} />
+              <Topbar />
+              <Menubar />
               <main
                 className={clsx(
                   classes.content,
@@ -120,7 +122,7 @@ export const Layout: React.FC<Props> = ({ title, children }) => {
                 )}
               >
                 <div className={classes.appBarSpacer} />
-                <Actionbar title={title} />
+                <Actionbar />
               </section>
             </div>
           </DataStateContext.Provider>

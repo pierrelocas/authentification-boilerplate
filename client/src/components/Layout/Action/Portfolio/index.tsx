@@ -8,7 +8,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
-import { DataContext, DataStateContext, DataDispatchContext } from '../contexts'
+import { DataStateContext, DataDispatchContext } from '../../../../contexts'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +58,9 @@ export const PortfolioAction: React.FC<Props> = () => {
           {dataState.portfolios.map((p: any) => (
             <MenuItem key={p.id} value={p.id}>
               {p.name}
+              <span
+                style={{ fontSize: '0.8rem' }}
+              >{` - (${p.exchange.toUpperCase()}/${p.currency.toUpperCase()})  `}</span>
             </MenuItem>
           ))}
         </Select>

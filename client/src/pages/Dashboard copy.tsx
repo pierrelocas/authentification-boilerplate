@@ -19,7 +19,6 @@ import MenuIcon from '@material-ui/icons/Menu'
 import Button from '@material-ui/core/Button'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import NotificationsIcon from '@material-ui/icons/Notifications'
-// import { MainListItems, SecondaryListItems } from '../components/listItems'
 import Chart from '../components/Chart'
 import Deposits from '../components/Deposits'
 import Orders from '../components/Orders'
@@ -30,8 +29,8 @@ import {
 } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { RouteComponentProps } from 'react-router-dom'
-import { NotificationContext } from '../NotificationContext'
 import { Spinner } from '../Spinner'
+import { NotificationContext } from '../contexts'
 
 function Copyright() {
   return (

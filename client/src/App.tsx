@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Routes } from './Routes'
 import { setAccessToken } from './accessToken'
-import { Notification } from './Notification'
+import { Notification } from './components/Notification'
 import { Backdrop } from '@material-ui/core'
 import { makeStyles, Theme } from '@material-ui/core/styles'
-import { NotificationType } from './NotificationType'
-import { NotificationContext } from './NotificationContext'
+import { NotificationType } from './components/Notification/Type'
 import { Spinner } from './Spinner'
+import { NotificationContext } from './contexts'
 
 interface Props {}
 

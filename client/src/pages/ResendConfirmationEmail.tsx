@@ -13,7 +13,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
 import { useSendConfirmationEmailMutation } from '../generated/graphql'
-import { NotificationContext } from '../NotificationContext'
+import { NotificationContext } from '../contexts'
 
 type FormData = {
   email: string

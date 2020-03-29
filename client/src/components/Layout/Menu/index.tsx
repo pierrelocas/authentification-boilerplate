@@ -6,8 +6,8 @@ import IconButton from '@material-ui/core/IconButton'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import Divider from '@material-ui/core/Divider'
 import List from '@material-ui/core/List'
-import { MenuItem, mainMenuItems, secondaryListItems } from './menubarItems'
-import { MENUBAR_WIDTH } from '../config'
+import { MenuItem, mainMenuItems, secondaryListItems } from './menuItems'
+import { MENUBAR_WIDTH } from '../../../config'
 import {
   ListSubheader,
   ListItem,
@@ -15,15 +15,11 @@ import {
   ListItemText
 } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
-import { LayoutStateContext, LayoutDispatchContext } from '../contexts'
+import { LayoutStateContext, LayoutDispatchContext } from '../../../contexts'
 
-interface Props {
-  title: string
-}
+interface Props {}
 
-interface MenuItemProps extends MenuItem {
-  title: string
-}
+interface MenuItemProps extends MenuItem {}
 
 const useStyles = makeStyles(theme => ({
   toolbarIcon: {
@@ -55,13 +51,14 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const MenubarItem: React.FC<MenuItemProps> = ({ name, path, icon, title }) => {
+const MenubarItem: React.FC<MenuItemProps> = ({ name, path, icon }) => {
   const history = useHistory()
+  const state: any = useContext(LayoutStateContext)
   return (
     <ListItem
       button
       onClick={() => history.push(path)}
-      selected={title === name}
+      selected={state.title === name}
     >
       <ListItemIcon>{icon}</ListItemIcon>
       <ListItemText primary={name} />
@@ -70,7 +67,7 @@ const MenubarItem: React.FC<MenuItemProps> = ({ name, path, icon, title }) => {
 }
 
 // SHOULD INCLUDE LISTITMES FILE DIRECTLY IN HERE
-export const Menubar: React.FC<Props> = ({ title }) => {
+export const Menubar: React.FC<Props> = () => {
   const state: any = useContext(LayoutStateContext)
   const dispatch: any = useContext(LayoutDispatchContext)
   const classes = useStyles()
@@ -93,14 +90,14 @@ export const Menubar: React.FC<Props> = ({ title }) => {
       <Divider />
       <List style={{ padding: '0px' }}>
         {mainMenuItems.map(item => (
-          <MenubarItem {...item} title={title} key={item.name} />
+          <MenubarItem {...item} key={item.name} />
         ))}
       </List>
       <Divider />
       <List style={{ padding: '0px' }}>
         <ListSubheader inset>Reports</ListSubheader>
         {secondaryListItems.map(item => (
-          <MenubarItem {...item} title={title} key={item.name} />
+          <MenubarItem {...item} key={item.name} />
         ))}
       </List>
     </Drawer>

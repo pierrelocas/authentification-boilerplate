@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { fade, makeStyles } from '@material-ui/core/styles'
-import { MENUBAR_WIDTH } from '../config'
+import { MENUBAR_WIDTH } from '../../../config'
 import {
   AppBar,
   Toolbar,
@@ -17,15 +17,16 @@ import SearchIcon from '@material-ui/icons/Search'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import AccountCircle from '@material-ui/icons/AccountCircle'
 import clsx from 'clsx'
-import { useSignOutMutation } from '../generated/graphql'
-import { setAccessToken } from '../accessToken'
+import { useSignOutMutation } from '../../../generated/graphql'
+import { setAccessToken } from '../../../accessToken'
 import { useHistory } from 'react-router-dom'
-import { NotificationContext } from '../NotificationContext'
-import { LayoutStateContext, LayoutDispatchContext } from '../contexts'
+import {
+  LayoutStateContext,
+  LayoutDispatchContext,
+  NotificationContext
+} from '../../../contexts'
 
-interface Props {
-  title: string
-}
+interface Props {}
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
@@ -99,7 +100,6 @@ export const Topbar: React.FC<Props> = props => {
   const { setNotification } = useContext(NotificationContext)
   const state: any = useContext(LayoutStateContext)
   const dispatch: any = useContext(LayoutDispatchContext)
-  const { title } = props
   const history = useHistory()
   const [logout, { client }] = useSignOutMutation({
     onError: err =>
@@ -168,7 +168,7 @@ export const Topbar: React.FC<Props> = props => {
           noWrap
           className={classes.title}
         >
-          {title}
+          {state.title}
         </Typography>
         <div className={classes.search}>
           <div className={classes.searchIcon}>

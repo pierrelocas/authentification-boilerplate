@@ -15,14 +15,14 @@ import SwapHorizontalBold from 'mdi-material-ui/SwapHorizontalBold'
 import CartArrowDown from 'mdi-material-ui/CartArrowDown'
 import EditIcon from '@material-ui/icons/Edit'
 import SettingsIcon from '@material-ui/icons/Settings'
-import { PortfolioAction } from './PortfolioAction'
-import TransactionAction from './TransactionAction'
+import TransactionAction from '../../TransactionAction'
 // import EditPortfolioAction from './EditAction/EditPortfolioAction'
 // import EditTransactionAction from './EditAction/EditTransactionAction'
-import { EditAction } from './EditAction'
+import { EditAction } from './Edit/'
 
-import { ACTIONBAR_WIDTH } from '../config'
-import { LayoutStateContext, LayoutDispatchContext } from '../contexts'
+import { ACTIONBAR_WIDTH } from '../../../config'
+import { LayoutStateContext, LayoutDispatchContext } from '../../../contexts'
+import { PortfolioAction } from './Portfolio'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,16 +56,8 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-interface Props {
-  title: string
-}
+interface Props {}
 
-const initialExpanded = {
-  portfolio: false,
-  edit: false,
-  transaction: false,
-  setting: false
-}
 export const Actionbar: React.FC<Props> = () => {
   const state: any = useContext(LayoutStateContext)
   const dispatch: any = useContext(LayoutDispatchContext)

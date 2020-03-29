@@ -15,7 +15,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container'
 import { useForm, Controller } from 'react-hook-form'
 import { useSignUpMutation } from '../generated/graphql'
-import { NotificationContext } from '../NotificationContext'
+import { NotificationContext } from '../contexts'
 
 interface FormData {
   firstname: string

@@ -5,10 +5,15 @@ interface IActionSection {
   setting: boolean
 }
 
+type TEdit = 'create' | 'update' | 'none'
+
 interface ILayoutState {
   openMenuBar: boolean
   openActionBar: boolean
   actionSection: IActionSection
+  page: string
+  title: string
+  edit: TEdit
 }
 
 export const intialLayoutState: ILayoutState = {
@@ -19,12 +24,15 @@ export const intialLayoutState: ILayoutState = {
     edit: false,
     transaction: false,
     setting: false
-  }
+  },
+  page: '',
+  title: '',
+  edit: 'none'
 }
 
 export const LayoutReducer = (
   state: ILayoutState,
-  action: { type: string; payload?: string }
+  action: { type: string; payload?: any }
 ) => {
   switch (action.type) {
     case 'toggleMenuBar': {
@@ -50,6 +58,20 @@ export const LayoutReducer = (
           [action.payload]: !(state.actionSection as any)[action.payload]
         }
       }
+    }
+    case 'setEdit': {
+      return {
+        ...state,
+        openActionBar: true,
+        actionSection: { ...state.actionSection, edit: true },
+        edit: action.payload
+      }
+    }
+    case 'setTitle': {
+      return { ...state, title: action.payload }
+    }
+    case 'setPage': {
+      return { ...state, page: action.payload }
     }
     default: {
       return { ...state }
