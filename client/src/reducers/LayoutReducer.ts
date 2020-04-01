@@ -27,7 +27,7 @@ export const intialLayoutState: ILayoutState = {
   },
   page: '',
   title: '',
-  edit: 'none'
+  edit: 'create'
 }
 
 export const LayoutReducer = (

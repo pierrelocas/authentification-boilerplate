@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
 interface Props {}
 
 export const Portfolio: React.FC<Props> = (props: any) => {
+  const layoutDispatch: any = useContext(LayoutDispatchContext)
   const dataState: any = useContext(DataStateContext)
   const dataDispatch: any = useContext(DataDispatchContext)
   const { id, name, exchange, currency } = props
@@ -62,7 +63,7 @@ export const Portfolio: React.FC<Props> = (props: any) => {
       <div className={classes.iconsSection}>
         <IconButton
           size='small'
-          onClick={() => console.log('go to edit')}
+          onClick={() => layoutDispatch({ type: 'setEdit', payload: 'update' })}
           className={classes.actionIcon}
         >
           <EditIcon color='action' />
