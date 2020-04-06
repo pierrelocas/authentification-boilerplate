@@ -6,34 +6,39 @@ import clsx from 'clsx'
 import React, { useContext } from 'react'
 import { DataStateContext, DataDispatchContext } from '../contexts'
 import { LayoutDispatchContext } from '../contexts'
+import {
+  useDeletePortfolioMutation,
+  PortfoliosDocument,
+  PortfoliosQuery,
+} from '../generated/graphql'
 import Title from './Title'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   portfolioContext: {
-    flex: 1
+    flex: 1,
   },
   paper: {
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   fixedHeight: {
     height: 240,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   active: {
     borderBottomStyle: 'solid',
     borderBottomWidth: 3,
-    borderBottomColor: theme.palette.primary.main
+    borderBottomColor: theme.palette.primary.main,
   },
   iconsSection: {
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   actionIcon: {
-    marginLeft: '2px'
-  }
+    marginLeft: '2px',
+  },
 }))
 
 interface Props {}
@@ -42,6 +47,26 @@ export const Portfolio: React.FC<Props> = (props: any) => {
   const layoutDispatch: any = useContext(LayoutDispatchContext)
   const dataState: any = useContext(DataStateContext)
   const dataDispatch: any = useContext(DataDispatchContext)
+  const [deletePortfolio] = useDeletePortfolioMutation({
+    onError: (err) => console.log(err),
+    update: (cache, { data }) => {
+      const { portfolios } = cache.readQuery({
+        query: PortfoliosDocument,
+      }) as PortfoliosQuery
+      if (!data) {
+        return null
+      }
+      cache.writeQuery<PortfoliosQuery>({
+        query: PortfoliosDocument,
+        data: {
+          portfolios: portfolios.filter(
+            (p: any) => p.id !== data.deletePortfolio
+          ),
+        },
+      })
+      console.log('updating cache', cache, data?.deletePortfolio)
+    },
+  })
   const { id, name, exchange, currency } = props
   const classes = useStyles()
 
@@ -56,7 +81,7 @@ export const Portfolio: React.FC<Props> = (props: any) => {
       onClick={() =>
         dataDispatch({
           type: 'setActivePortfolio',
-          payload: id
+          payload: id,
         })
       }
     >
@@ -70,7 +95,10 @@ export const Portfolio: React.FC<Props> = (props: any) => {
         </IconButton>
         <IconButton
           size='small'
-          onClick={() => console.log('Delete')}
+          onClick={() => {
+            console.log('deleting', id)
+            deletePortfolio({ variables: { portfolioId: id } })
+          }}
           className={classes.actionIcon}
         >
           <DeleteIcon color='action' />

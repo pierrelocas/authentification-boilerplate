@@ -1,0 +1,20 @@
+mutation CreatePortfolio(
+  $name: String!
+  $exchange: String!
+  $currency: String!
+  $favorite: Boolean
+) {
+  createPortfolio(
+    name: $name
+    exchange: $exchange
+    currency: $currency
+    favorite: $favorite
+  ) {
+    id
+    name
+    currency
+    exchange
+    favorite
+    userId
+  }
+}

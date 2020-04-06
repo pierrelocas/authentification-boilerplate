@@ -1,25 +1,13 @@
-import { useFetchData } from '../useFetchData'
-
 interface IDataState {
   activePortfolio: number | null
   activeTransaction: number | null
   activePosition: number | null
-  me: null
-  portfolios?: any
-  transactions: null
-  positions: null
-  loading: boolean
 }
 
 export const initialDataState: IDataState = {
   activePortfolio: null,
   activeTransaction: null,
   activePosition: null,
-  me: null,
-  portfolios: null,
-  transactions: null,
-  positions: null,
-  loading: true
 }
 
 export const getInitialDataState = (): any => {
@@ -40,19 +28,20 @@ export const DataReducer = (
     case 'setActivePosition': {
       return { ...state, activePosition: action.payload }
     }
-    case 'setData': {
-      const portfolios = action.payload.data?.portfolios
-      const portfolioId =
-        !state.activePortfolio && portfolios?.length
-          ? portfolios.find((p: any) => p.favorite)?.id
-          : state.activePortfolio
-      return {
-        ...state,
-        ...action.payload.data,
-        loading: action.payload.loading,
-        activePortfolio: portfolioId
-      }
-    }
+
+    // case 'setData': {
+    //   const portfolios = action.payload.data?.portfolios
+    //   const portfolioId =
+    //     !state.activePortfolio && portfolios?.length
+    //       ? portfolios.find((p: any) => p.favorite)?.id
+    //       : state.activePortfolio
+    //   return {
+    //     ...state,
+    //     ...action.payload.data,
+    //     loading: action.payload.loading,
+    //     activePortfolio: portfolioId,
+    //   }
+    // }
     default: {
       return { ...state }
     }

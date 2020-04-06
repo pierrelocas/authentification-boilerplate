@@ -11,7 +11,7 @@ import {
 } from 'type-graphql'
 import { hash, compare } from 'bcryptjs'
 import { User } from '../entity/User'
-import { MyContext } from '../MyContext'
+import { MyContext, ITokenPayload } from '../MyContext'
 import {
   createAccessToken,
   createRefreshToken,
@@ -57,7 +57,7 @@ export class UserResolver {
 
     try {
       const token = authorization.split(' ')[1]
-      const payload: any = verify(token, ACCESS_TOKEN_SECRET!)
+      const payload = verify(token, ACCESS_TOKEN_SECRET!) as ITokenPayload
       return await User.findOne({ id: payload.userId })
     } catch (err) {
       console.log(err)
@@ -151,6 +151,7 @@ export class UserResolver {
 
     // Successful login
     const accessToken = createAccessToken(user)
+    console.log(accessToken)
 
     sendRefreshToken(res, createRefreshToken(user))
 

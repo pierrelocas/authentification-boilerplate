@@ -4,23 +4,25 @@ import { Portfolio } from '../components/Portfolio'
 import {
   DataStateContext,
   LayoutDispatchContext,
-  LayoutStateContext
+  LayoutStateContext,
 } from '../contexts'
 import AddIcon from '@material-ui/icons/Add'
 
 interface Props {}
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4)
-  }
+    paddingBottom: theme.spacing(4),
+  },
 }))
 
-const Portfolios: React.FC<Props> = props => {
+const Portfolios: React.FC<Props> = (props) => {
   const dataState: any = useContext(DataStateContext)
   const layoutDispatch: any = useContext(LayoutDispatchContext)
   const classes = useStyles()
+
+  console.log(dataState)
 
   return (
     <Container maxWidth='lg' className={classes.container}>

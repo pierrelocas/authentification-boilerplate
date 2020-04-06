@@ -7,7 +7,7 @@ import {
   InputType,
   Int,
   Ctx,
-  UseMiddleware
+  UseMiddleware,
 } from 'type-graphql'
 import { InsertResult } from 'typeorm'
 import { Portfolio } from '../entity/Portfolio'
@@ -58,7 +58,7 @@ export class PortfolioResolver {
     console.log({ payload })
     const portfolios = await Portfolio.find({
       where: { userId: payload!.userId },
-      relations: ['user']
+      relations: ['user'],
     })
     return portfolios
   }
@@ -67,35 +67,41 @@ export class PortfolioResolver {
    * Implement isAuth middleware and get userId from context.
    * (remove user Id as a parameter)
    */
-  @Mutation(() => Boolean)
+  @Mutation(() => Portfolio)
+  @UseMiddleware(isAuth)
   async createPortfolio(
-    @Arg('userId', () => Int) userId: number,
+    @Ctx() { payload }: MyContext,
     @Arg('name') name: string,
     @Arg('exchange') exchange: string,
     @Arg('currency') currency: string,
     @Arg('favorite', { defaultValue: false }) favorite?: boolean
-  ): Promise<Boolean> {
+  ): Promise<Portfolio> {
     let response: InsertResult
 
     // @TODO : Handle favorite/default portfolio, first one should be true, the subsequent ones should be false
     const portfolios = await Portfolio.find()
+    // console.log('count', await Portfolio.count())
     try {
       response = await Portfolio.insert({
         name,
         exchange,
         currency,
-        favorite: portfolios.length ? true : favorite,
-        userId
+        favorite: !!portfolios.length ? favorite : true,
+        userId: payload!.userId,
       })
     } catch (err) {
       console.log(err)
-      throw new Error('oops, something went terribly wrong!')
+      throw new Error('oops, something went terribly wrong! : ' + err.message)
     }
 
     console.log(response)
-
-    return true
+    const newPortfolio = await Portfolio.findOne({
+      id: response.identifiers[0].id,
+    })
+    if (newPortfolio) return newPortfolio
+    else throw new Error('ooops, I did it again')
   }
+
   /**
    * Add check to see if portfolio belongs to logged in user
    */
@@ -108,9 +114,13 @@ export class PortfolioResolver {
     return !!result.affected
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Int)
+  @UseMiddleware(isAuth)
   async deletePortfolio(@Arg('portfolioId', () => Int) id: number) {
     const result = await Portfolio.delete({ id })
-    return !!result.affected
+    if (result.affected === 0) {
+      throw new Error('Oooops, nothing was deleted, failed.')
+    }
+    return id
   }
 }

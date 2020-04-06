@@ -7,63 +7,69 @@ import {
   Button,
   withStyles,
   Typography,
-  makeStyles
+  makeStyles,
 } from '@material-ui/core'
 import { green, orange } from '@material-ui/core/colors'
 import {
   LayoutStateContext,
   LayoutDispatchContext,
-  DataStateContext
+  DataStateContext,
 } from '../../../../contexts'
 import { useForm, Controller } from 'react-hook-form'
+import {
+  useCreatePortfolioMutation,
+  PortfoliosQuery,
+  PortfoliosDocument,
+  Portfolio,
+} from '../../../../generated/graphql'
 
 interface Props {}
 
 interface IEditPortfolio {
-  name?: string
-  exchange?: string
-  currency?: string
+  name: string
+  exchange: string
+  currency: string
 }
 
 const intitialEditPortfolio: IEditPortfolio = {
   name: '',
   exchange: '',
-  currency: ''
+  currency: '',
 }
 
 const AddUpdateSwitch = withStyles({
   switchBase: {
     color: green[500],
     '&$checked': {
-      color: orange[500]
+      color: orange[500],
     },
     '&$checked + $track': {
-      backgroundColor: orange[500]
-    }
+      backgroundColor: orange[500],
+    },
   },
   checked: {},
-  track: { backgroundColor: green[500] }
+  track: { backgroundColor: green[500] },
 })(Switch)
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   colorCreate: {
-    color: green[500]
+    color: green[500],
   },
   colorUpdate: {
-    color: orange[500]
+    color: orange[500],
   },
   backgroundCreate: {
     backgroundColor: green[500],
-    color: 'white'
+    color: 'white',
   },
   backgroundUpdate: {
     backgroundColor: orange[500],
-    color: 'white'
+    color: 'white',
   },
   backgroundDelete: {
     backgroundColor: theme.palette.error.dark,
-    color: 'white'
-  }
+    color: 'white',
+  },
 }))
 
 export const EditPortfolio: React.FC<Props> = () => {
@@ -73,6 +79,44 @@ export const EditPortfolio: React.FC<Props> = () => {
   const [editPortfolio, setEditPortfolio] = useState<IEditPortfolio>(
     intitialEditPortfolio
   )
+  const [createPortfolio] = useCreatePortfolioMutation({
+    variables: {
+      ...editPortfolio,
+    },
+    update: (cache, { data }) => {
+      const { portfolios } = cache.readQuery({
+        query: PortfoliosDocument,
+      }) as PortfoliosQuery
+
+      console.log(portfolios)
+      console.log([data?.createPortfolio])
+
+      if (!data) {
+        return null
+      }
+      cache.writeQuery<PortfoliosQuery>({
+        query: PortfoliosDocument,
+        data: {
+          portfolios: portfolios.concat([data.createPortfolio]),
+        },
+      })
+      // if (data && data.createPortfolio) {
+      //   portfolios.push(data.createPortfolio)
+      //   console.log(portfolios)
+      // }
+      //   if (!data) {
+      //     return null
+      //   }
+      //   const   = cache.readQuery({query: PortfoliosDocument})
+      //   const {portfolios} = r
+      //   cache.writeQuery<any>({
+      //     query: PortfoliosDocument,
+      //     data: {
+      //       portfolios: {portfolios.concat([data.createPortfolio]) }
+      //     }
+      //   })
+    },
+  })
 
   const classes = useStyles()
 
@@ -86,7 +130,7 @@ export const EditPortfolio: React.FC<Props> = () => {
         ...editPortfolio,
         name: currentPortfolio.name,
         exchange: currentPortfolio.exchange,
-        currency: currentPortfolio.currency
+        currency: currentPortfolio.currency,
       })
     } else {
       setEditPortfolio(intitialEditPortfolio)
@@ -96,8 +140,13 @@ export const EditPortfolio: React.FC<Props> = () => {
   const handleChange = (event: any) => {
     setEditPortfolio({
       ...editPortfolio,
-      [event.currentTarget.name]: event.currentTarget.value
+      [event.currentTarget.name]: event.currentTarget.value,
     })
+  }
+  const handleSubmit: any = (action: string) => {
+    if (action === 'create') {
+      return createPortfolio
+    }
   }
 
   return (
@@ -110,7 +159,7 @@ export const EditPortfolio: React.FC<Props> = () => {
             paddingTop: 0,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end'
+            justifyContent: 'flex-end',
           }}
         >
           <Button
@@ -131,10 +180,10 @@ export const EditPortfolio: React.FC<Props> = () => {
         >
           <AddUpdateSwitch
             checked={layoutState.edit === 'update'}
-            onChange={event =>
+            onChange={(event: any) =>
               layoutDispatch({
                 type: 'setEdit',
-                payload: event.target.checked ? 'update' : 'create'
+                payload: event.target.checked ? 'update' : 'create',
               })
             }
             color='primary'
@@ -146,7 +195,7 @@ export const EditPortfolio: React.FC<Props> = () => {
           style={{
             paddingTop: 0,
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           <Button
@@ -201,7 +250,7 @@ export const EditPortfolio: React.FC<Props> = () => {
                 : classes.backgroundUpdate
             )}
             // value={newAction ? 'add' : 'update'}
-            onClick={() => console.log(JSON.stringify(editPortfolio, null, 2))}
+            onClick={handleSubmit('create')}
           >
             {layoutState.edit === 'create' ? 'create' : 'update'}
           </Button>

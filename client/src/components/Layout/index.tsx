@@ -6,15 +6,19 @@ import { Actionbar } from './Action'
 import { CssBaseline, makeStyles, Theme, createStyles } from '@material-ui/core'
 import { ACTIONBAR_WIDTH, ACTIONBAR_COMPACT_WIDTH } from '../../config'
 import { Spinner } from '../../Spinner'
-import { useFetchData } from '../../useFetchData'
 import {
   LayoutDispatchContext,
   LayoutStateContext,
   DataDispatchContext,
-  DataStateContext
+  DataStateContext,
 } from '../../contexts'
 import { DataReducer, initialDataState } from '../../reducers/DataReducer'
 import { LayoutReducer, intialLayoutState } from '../../reducers/LayoutReducer'
+import {
+  useMeQuery,
+  usePortfoliosQuery,
+  useTransactionsQuery,
+} from '../../generated/graphql'
 
 interface Props {
   title: string
@@ -22,10 +26,10 @@ interface Props {
   children?: any
 }
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      display: 'flex'
+      display: 'flex',
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
@@ -35,31 +39,31 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: ACTIONBAR_WIDTH,
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen
-      })
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
     contentWide: {
       marginRight: ACTIONBAR_COMPACT_WIDTH,
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
-      })
+        duration: theme.transitions.duration.leavingScreen,
+      }),
     },
     actionBar: {
       position: 'absolute',
       right: 0,
       transition: theme.transitions.create('right', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen
-      })
+        duration: theme.transitions.duration.enteringScreen,
+      }),
     },
     actionBarClosed: {
       right: -(ACTIONBAR_WIDTH - ACTIONBAR_COMPACT_WIDTH),
       transition: theme.transitions.create('right', {
         easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen
-      })
-    }
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+    },
   })
 )
 
@@ -70,8 +74,32 @@ export const Layout: React.FC<Props> = ({ title, page, children }) => {
   )
   const [dataState, dataDispatch] = useReducer(DataReducer, initialDataState)
 
+  const { data: meData, loading: meLoading } = useMeQuery({
+    fetchPolicy: 'network-only',
+    onError: (err) => {
+      console.log(err)
+    },
+  })
+  const {
+    loading: portfolioLoading,
+    data: portfoliosData,
+  } = usePortfoliosQuery({
+    onError: (err) => {
+      console.log(err)
+    },
+  })
+  const {
+    loading: transactionsLoading,
+    data: transactionsData,
+  } = useTransactionsQuery({
+    variables: { portfolioId: dataState.activePortfolio },
+    onError: (err) => {
+      console.log(err)
+    },
+  })
+
   // when null is provided to fetch transaction it select the favorite portfolio
-  const { loading, error, data } = useFetchData(dataState.activePortfolio)
+  // const { loading, error, data } = useFetchData(dataState.activePortfolio)
 
   useEffect(() => {
     ;(() => {
@@ -80,28 +108,27 @@ export const Layout: React.FC<Props> = ({ title, page, children }) => {
     })()
   }, [title, page])
 
-  useEffect(() => {
-    ;(async () =>
-      await dataDispatch({
-        type: 'setData',
-        payload: { loading, data }
-      }))()
-  }, [loading, dataState.activePortfolio])
-
   const classes = useStyles()
 
-  if (dataState.loading) {
+  if (meLoading || portfolioLoading || transactionsLoading) {
+    console.log('loading')
     return <Spinner />
   }
 
-  if (error) {
-    console.log(error.message)
-  }
+  console.log(portfoliosData)
   return (
     <LayoutDispatchContext.Provider value={layoutDispatch}>
       <LayoutStateContext.Provider value={layoutState}>
         <DataDispatchContext.Provider value={dataDispatch}>
-          <DataStateContext.Provider value={dataState}>
+          <DataStateContext.Provider
+            value={{
+              ...dataState,
+              ...meData,
+              ...portfoliosData,
+              ...transactionsData,
+            }}
+          >
+            {console.log(dataState)}
             <div className={classes.root}>
               <CssBaseline />
               <Topbar />
@@ -115,6 +142,7 @@ export const Layout: React.FC<Props> = ({ title, page, children }) => {
                 <div className={classes.appBarSpacer} />
                 {children}
               </main>
+
               <section
                 className={clsx(
                   classes.actionBar,
