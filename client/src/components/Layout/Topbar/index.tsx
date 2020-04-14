@@ -22,6 +22,7 @@ import { setAccessToken } from '../../../accessToken'
 import { useHistory } from 'react-router-dom'
 import { LayoutStateContext } from '../../../contexts/LayoutProvider'
 import { NotificationContext } from '../../../contexts/NotificationProvider'
+import { GlobalStateContext } from '../../../contexts/GlobalProvider'
 
 interface Props {}
 
@@ -94,7 +95,8 @@ const useStyles = makeStyles(theme => ({
 
 export const Topbar: React.FC<Props> = props => {
   const { setNotification } = useContext(NotificationContext)
-  const context: any = useContext(LayoutStateContext)
+  const layoutContext: any = useContext(LayoutStateContext)
+  const globalContext: any = useContext(GlobalStateContext)
   const [anchorEl, setAnchorEl] = useState(null)
   const history = useHistory()
   const classes = useStyles()
@@ -144,7 +146,7 @@ export const Topbar: React.FC<Props> = props => {
       position='absolute'
       className={clsx(
         classes.appBar,
-        context.openMenuBar && classes.appBarShift
+        layoutContext.openMenuBar && classes.appBarShift
       )}
     >
       <Toolbar className={classes.toolbar}>
@@ -152,10 +154,10 @@ export const Topbar: React.FC<Props> = props => {
           edge='start'
           color='inherit'
           aria-label='open drawer'
-          onClick={() => context.toggleMenu()}
+          onClick={() => layoutContext.toggleMenu()}
           className={clsx(
             classes.menuButton,
-            context.openMenuBar && classes.menuButtonHidden
+            layoutContext.openMenuBar && classes.menuButtonHidden
           )}
         >
           <MenuIcon />
@@ -167,7 +169,7 @@ export const Topbar: React.FC<Props> = props => {
           noWrap
           className={classes.title}
         >
-          {context.title}
+          {globalContext.title}
         </Typography>
         <div className={classes.search}>
           <div className={classes.searchIcon}>

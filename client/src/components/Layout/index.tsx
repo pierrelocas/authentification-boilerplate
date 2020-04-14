@@ -13,6 +13,7 @@ import {
 import { LayoutProvider } from '../../contexts/LayoutProvider'
 import { Main } from './Main'
 import { CssBaseline } from '@material-ui/core'
+import { GlobalProvider } from '../../contexts/GlobalProvider'
 
 interface Props {
   title: string
@@ -55,25 +56,27 @@ export const Layout: React.FC<Props> = ({ title, page, children }) => {
   }
 
   return (
-    <LayoutProvider title={title} page={page}>
-      <DataDispatchContext.Provider value={dataDispatch}>
-        <DataStateContext.Provider
-          value={{
-            ...dataState,
-            ...meData,
-            ...portfoliosData,
-            ...transactionsData
-          }}
-        >
-          <div style={{ display: 'flex' }}>
-            <CssBaseline />
-            <Topbar />
-            <Menubar />
-            <Main>{children}</Main>
-            <Actionbar />
-          </div>
-        </DataStateContext.Provider>
-      </DataDispatchContext.Provider>
+    <LayoutProvider>
+      <GlobalProvider title={title} page={page}>
+        <DataDispatchContext.Provider value={dataDispatch}>
+          <DataStateContext.Provider
+            value={{
+              ...dataState,
+              ...meData,
+              ...portfoliosData,
+              ...transactionsData
+            }}
+          >
+            <div style={{ display: 'flex' }}>
+              <CssBaseline />
+              <Topbar />
+              <Menubar />
+              <Main>{children}</Main>
+              <Actionbar />
+            </div>
+          </DataStateContext.Provider>
+        </DataDispatchContext.Provider>
+      </GlobalProvider>
     </LayoutProvider>
   )
 }

@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
 interface Props {}
 
 export const Actionbar: React.FC<Props> = () => {
-  const context: any = useContext(LayoutStateContext)
+  const layoutContext: any = useContext(LayoutStateContext)
   // const dispatch: any = useContext(LayoutDispatchContext)
 
   const classes = useStyles()
@@ -80,7 +80,7 @@ export const Actionbar: React.FC<Props> = () => {
     <section
       className={clsx(
         classes.actionBar,
-        !context.openActionBar && classes.actionBarClosed
+        !layoutContext.openActionBar && classes.actionBarClosed
       )}
     >
       <div className={classes.appBarSpacer} />
@@ -88,7 +88,7 @@ export const Actionbar: React.FC<Props> = () => {
         <Paper
           className={clsx(
             classes.paper,
-            !context.openActionBar && classes.paperCompact
+            !layoutContext.openActionBar && classes.paperCompact
           )}
         >
           <Typography component='h2' variant='h6' color='primary'>
@@ -97,14 +97,18 @@ export const Actionbar: React.FC<Props> = () => {
           <IconButton
             size='small'
             color='primary'
-            onClick={() => context.toggleAction()}
+            onClick={() => layoutContext.toggleAction()}
           >
-            {context.openActionBar ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            {layoutContext.openActionBar ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronLeftIcon />
+            )}
           </IconButton>
         </Paper>
         <ExpansionPanel
-          expanded={context.actionSection.portfolio}
-          onChange={() => context.toggleActionSection('portfolio')}
+          expanded={layoutContext.actionSection.portfolio}
+          onChange={() => layoutContext.toggleActionSection('portfolio')}
         >
           <ExpansionPanelSummary
             className={classes.expSummary}
@@ -120,8 +124,8 @@ export const Actionbar: React.FC<Props> = () => {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         <ExpansionPanel
-          expanded={context.actionSection.transaction}
-          onChange={() => context.toggleActionSection('transaction')}
+          expanded={layoutContext.actionSection.transaction}
+          onChange={() => layoutContext.toggleActionSection('transaction')}
         >
           <ExpansionPanelSummary
             className={classes.expSummary}
@@ -143,8 +147,8 @@ export const Actionbar: React.FC<Props> = () => {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         <ExpansionPanel
-          expanded={context.actionSection.edit}
-          onChange={() => context.toggleActionSection('edit')}
+          expanded={layoutContext.actionSection.edit}
+          onChange={() => layoutContext.toggleActionSection('edit')}
         >
           <ExpansionPanelSummary
             className={classes.expSummary}
@@ -160,8 +164,8 @@ export const Actionbar: React.FC<Props> = () => {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         <ExpansionPanel
-          expanded={context.actionSection.setting}
-          onChange={() => context.toggleActionSection('setting')}
+          expanded={layoutContext.actionSection.setting}
+          onChange={() => layoutContext.toggleActionSection('setting')}
         >
           <ExpansionPanelSummary
             className={classes.expSummary}

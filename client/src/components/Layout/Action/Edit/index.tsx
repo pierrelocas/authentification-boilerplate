@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { EditPortfolio } from './EditPortfolio'
-import { LayoutStateContext } from '../../../../contexts/LayoutProvider'
+import { GlobalStateContext } from '../../../../contexts/GlobalProvider'
 
 interface Props {}
 
 export const EditAction: React.FC<Props> = () => {
-  const context: any = useContext(LayoutStateContext)
-  switch (context.page) {
+  const globalContext: any = useContext(GlobalStateContext)
+  switch (globalContext.page) {
     case 'portfolios':
       return <EditPortfolio />
     default:

@@ -1,18 +1,19 @@
-import React, { useContext } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import FormControl from '@material-ui/core/FormControl'
+import FormHelperText from '@material-ui/core/FormHelperText'
 import Input from '@material-ui/core/Input'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
-import { DataStateContext, DataDispatchContext } from '../../../../contexts'
+import { makeStyles } from '@material-ui/core/styles'
+import React, { useContext } from 'react'
+import { DataDispatchContext, DataStateContext } from '../../../../contexts'
+import { GlobalStateContext } from '../../../../contexts/GlobalProvider'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexBasis: '100%',
     display: 'flex',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
   },
   formControl: {
     marginTop: 0,
@@ -20,17 +21,18 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     paddingTop: 0,
-    flexBasis: '100%',
+    flexBasis: '100%'
   },
   selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
+    marginTop: theme.spacing(2)
+  }
 }))
 
 interface Props {}
 
 export const PortfolioAction: React.FC<Props> = () => {
   const dataState: any = useContext(DataStateContext)
+  const globalState: any = useContext(GlobalStateContext)
   const dataDispatch: any = useContext(DataDispatchContext)
   const classes = useStyles()
 
@@ -41,17 +43,12 @@ export const PortfolioAction: React.FC<Props> = () => {
           Portfolio
         </InputLabel>
         <Select
-          value={dataState.activePortfolio || ''}
+          value={globalState.activePortfolio || ''}
           input={<Input name='portfolio' id='portfolio-select' />}
           displayEmpty
           name='portfolio'
           className={classes.selectEmpty}
-          onChange={(event) =>
-            dataDispatch({
-              type: 'setActivePortfolio',
-              payload: event.target.value,
-            })
-          }
+          onChange={event => globalState.setActivePortfolio(event.target.value)}
         >
           {dataState.portfolios.map((p: any) => (
             <MenuItem key={p.id} value={p.id}>

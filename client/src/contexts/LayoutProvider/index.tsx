@@ -3,8 +3,6 @@ import { LayoutReducer } from './LayoutReducer'
 
 interface Props {
   children?: any
-  title: string
-  page: string
 }
 
 type TEdit = 'create' | 'update' | 'none'
@@ -20,8 +18,8 @@ export interface ILayoutState {
   openMenuBar: boolean
   openActionBar: boolean
   actionSection: IActionSection
-  page: string
-  title: string
+  // page: string
+  // title: string
   editActionType: TEdit
 }
 
@@ -34,27 +32,27 @@ export const intialLayoutState: ILayoutState = {
     transaction: false,
     setting: false
   },
-  page: '',
-  title: '',
+  // page: '',
+  // title: '',
   editActionType: 'create'
 }
 
 export const LayoutStateContext: any = createContext(intialLayoutState)
 
-export const LayoutProvider: React.FC<Props> = ({ children, title, page }) => {
+export const LayoutProvider: React.FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(LayoutReducer, intialLayoutState)
-  useEffect(() => {
-    setPage(page)
-    setTitle(title)
-  }, [page, title])
+  // useEffect(() => {
+  //   setPage(page)
+  //   setTitle(title)
+  // }, [page, title])
 
-  function setPage(page: string) {
-    dispatch({ type: 'SET_PAGE', payload: page })
-  }
+  // function setPage(page: string) {
+  //   dispatch({ type: 'SET_PAGE', payload: page })
+  // }
 
-  function setTitle(title: string) {
-    dispatch({ type: 'SET_TITLE', payload: title })
-  }
+  // function setTitle(title: string) {
+  //   dispatch({ type: 'SET_TITLE', payload: title })
+  // }
 
   function toggleMenu() {
     dispatch({ type: 'TOGGLE_MENU' })
@@ -71,14 +69,7 @@ export const LayoutProvider: React.FC<Props> = ({ children, title, page }) => {
   return (
     <LayoutStateContext.Provider
       value={{
-        openMenuBar: state.openMenuBar,
-        openActionBar: state.openActionBar,
-        actionSection: state.actionSection,
-        page: state.page,
-        title: state.title,
-        editActionType: state.editActionType,
-        setPage,
-        setTitle,
+        ...state,
         toggleMenu,
         toggleAction,
         toggleActionSection

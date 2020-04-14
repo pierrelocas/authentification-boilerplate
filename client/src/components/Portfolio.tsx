@@ -11,6 +11,7 @@ import {
   PortfoliosQuery
 } from '../generated/graphql'
 import Title from './Title'
+import { GlobalStateContext } from '../contexts/GlobalProvider'
 
 const useStyles = makeStyles(theme => ({
   portfolioContext: {
@@ -44,7 +45,8 @@ interface Props {}
 
 export const Portfolio: React.FC<Props> = (props: any) => {
   const dataState: any = useContext(DataStateContext)
-  const dataDispatch: any = useContext(DataDispatchContext)
+  // const dataDispatch: any = useContext(DataDispatchContext)
+  const globalContext: any = useContext(GlobalStateContext)
 
   const [deletePortfolio] = useDeletePortfolioMutation({
     onError: err => console.log(err),
@@ -76,15 +78,10 @@ export const Portfolio: React.FC<Props> = (props: any) => {
       className={clsx(
         classes.paper,
         classes.fixedHeight,
-        id === dataState.activePortfolio && classes.active
+        id === globalContext.activePortfolio && classes.active
       )}
       elevation={5}
-      onClick={() =>
-        dataDispatch({
-          type: 'setActivePortfolio',
-          payload: id
-        })
-      }
+      onClick={() => globalContext.setActivePortfolio(id)}
     >
       <div className={classes.iconsSection}>
         <IconButton
