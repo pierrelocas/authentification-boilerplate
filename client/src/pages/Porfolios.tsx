@@ -1,25 +1,21 @@
 import React, { useContext } from 'react'
 import { Container, Grid, makeStyles, Fab } from '@material-ui/core'
 import { Portfolio } from '../components/Portfolio'
-import {
-  DataStateContext,
-  LayoutDispatchContext,
-  LayoutStateContext,
-} from '../contexts'
+import { DataStateContext } from '../contexts'
 import AddIcon from '@material-ui/icons/Add'
 
 interface Props {}
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   container: {
     paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
+    paddingBottom: theme.spacing(4)
+  }
 }))
 
-const Portfolios: React.FC<Props> = (props) => {
+const Portfolios: React.FC<Props> = props => {
   const dataState: any = useContext(DataStateContext)
-  const layoutDispatch: any = useContext(LayoutDispatchContext)
+  // const layoutDispatch: any = useContext(LayoutDispatchContext)
   const classes = useStyles()
 
   console.log(dataState)
@@ -36,9 +32,10 @@ const Portfolios: React.FC<Props> = (props) => {
           <Fab
             color='primary'
             aria-label='add'
-            onClick={() =>
-              layoutDispatch({ type: 'setEdit', payload: 'create' })
-            }
+            onClick={() => {
+              console.log('create Portfolio')
+              // layoutDispatch({ type: 'setEditActionType', payload: 'create' })
+            }}
           >
             <AddIcon />
           </Fab>

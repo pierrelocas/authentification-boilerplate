@@ -3,7 +3,7 @@ import { useParams, RouteComponentProps } from 'react-router-dom'
 import { useConfirmEmailMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
 import { Spinner } from '../Spinner'
-import { NotificationContext } from '../contexts'
+import { NotificationContext } from '../contexts/NotificationProvider'
 
 interface Props extends RouteComponentProps {}
 

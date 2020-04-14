@@ -15,7 +15,8 @@ import {
   ListItemText
 } from '@material-ui/core'
 import { useHistory } from 'react-router-dom'
-import { LayoutStateContext, LayoutDispatchContext } from '../../../contexts'
+
+import { LayoutStateContext } from '../../../contexts/LayoutProvider'
 
 interface Props {}
 
@@ -53,12 +54,12 @@ const useStyles = makeStyles(theme => ({
 
 const MenubarItem: React.FC<MenuItemProps> = ({ name, path, icon }) => {
   const history = useHistory()
-  const state: any = useContext(LayoutStateContext)
+  const context: any = useContext(LayoutStateContext)
   return (
     <ListItem
       button
       onClick={() => history.push(path)}
-      selected={state.title === name}
+      selected={context.title === name}
     >
       <ListItemIcon>{icon}</ListItemIcon>
       <ListItemText primary={name} />
@@ -68,8 +69,7 @@ const MenubarItem: React.FC<MenuItemProps> = ({ name, path, icon }) => {
 
 // SHOULD INCLUDE LISTITMES FILE DIRECTLY IN HERE
 export const Menubar: React.FC<Props> = () => {
-  const state: any = useContext(LayoutStateContext)
-  const dispatch: any = useContext(LayoutDispatchContext)
+  const context: any = useContext(LayoutStateContext)
   const classes = useStyles()
   return (
     <Drawer
@@ -77,13 +77,13 @@ export const Menubar: React.FC<Props> = () => {
       classes={{
         paper: clsx(
           classes.drawerPaper,
-          !state.openMenuBar && classes.drawerPaperClose
+          !context.openMenuBar && classes.drawerPaperClose
         )
       }}
-      open={state.openMenuBar}
+      open={context.openMenuBar}
     >
       <div className={classes.toolbarIcon}>
-        <IconButton onClick={() => dispatch({ type: 'toggleMenuBar' })}>
+        <IconButton onClick={() => context.toggleMenu()}>
           <ChevronLeftIcon />
         </IconButton>
       </div>

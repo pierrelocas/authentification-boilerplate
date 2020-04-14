@@ -30,7 +30,8 @@ import {
 import { setAccessToken } from '../accessToken'
 import { RouteComponentProps } from 'react-router-dom'
 import { Spinner } from '../Spinner'
-import { NotificationContext } from '../contexts'
+import { NotificationContext } from '../contexts/NotificationProvider'
+// import { NotificationContext } from '../contexts'
 
 function Copyright() {
   return (

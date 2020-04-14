@@ -1,8 +1,6 @@
 import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Input from '@material-ui/core/Input'
-import OutlinedInput from '@material-ui/core/OutlinedInput'
-import FilledInput from '@material-ui/core/FilledInput'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormHelperText from '@material-ui/core/FormHelperText'
@@ -10,11 +8,11 @@ import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import { DataStateContext, DataDispatchContext } from '../../../../contexts'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexBasis: '100%',
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   formControl: {
     marginTop: 0,
@@ -22,11 +20,11 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     paddingTop: 0,
-    flexBasis: '100%'
+    flexBasis: '100%',
   },
   selectEmpty: {
-    marginTop: theme.spacing(2)
-  }
+    marginTop: theme.spacing(2),
+  },
 }))
 
 interface Props {}
@@ -48,10 +46,10 @@ export const PortfolioAction: React.FC<Props> = () => {
           displayEmpty
           name='portfolio'
           className={classes.selectEmpty}
-          onChange={event =>
+          onChange={(event) =>
             dataDispatch({
               type: 'setActivePortfolio',
-              payload: event.target.value
+              payload: event.target.value,
             })
           }
         >

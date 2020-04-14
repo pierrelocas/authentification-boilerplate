@@ -1,44 +1,14 @@
-interface IActionSection {
-  portfolio: boolean
-  edit: boolean
-  transaction: boolean
-  setting: boolean
-}
-
-type TEdit = 'create' | 'update' | 'none'
-
-interface ILayoutState {
-  openMenuBar: boolean
-  openActionBar: boolean
-  actionSection: IActionSection
-  page: string
-  title: string
-  edit: TEdit
-}
-
-export const intialLayoutState: ILayoutState = {
-  openMenuBar: true,
-  openActionBar: false,
-  actionSection: {
-    portfolio: false,
-    edit: false,
-    transaction: false,
-    setting: false
-  },
-  page: '',
-  title: '',
-  edit: 'create'
-}
+import { ILayoutState, intialLayoutState } from './'
 
 export const LayoutReducer = (
   state: ILayoutState,
   action: { type: string; payload?: any }
 ) => {
   switch (action.type) {
-    case 'toggleMenuBar': {
+    case 'TOGGLE_MENU': {
       return { ...state, openMenuBar: !state.openMenuBar }
     }
-    case 'toggleActionBar': {
+    case 'TOGGLE_ACTION': {
       if (state.openActionBar)
         return {
           ...state,
@@ -49,7 +19,7 @@ export const LayoutReducer = (
         return { ...state, openActionBar: !state.openActionBar }
       }
     }
-    case 'toggleActionSection': {
+    case 'TOGGLE_ACTION_SECTION': {
       if (!action.payload) return { ...state }
       return {
         ...state,
@@ -59,18 +29,18 @@ export const LayoutReducer = (
         }
       }
     }
-    case 'setEdit': {
+    case 'setEditActionType': {
       return {
         ...state,
         openActionBar: true,
         actionSection: { ...state.actionSection, edit: true },
-        edit: action.payload
+        editActionType: action.payload
       }
     }
-    case 'setTitle': {
+    case 'SET_TITLE': {
       return { ...state, title: action.payload }
     }
-    case 'setPage': {
+    case 'SET_PAGE': {
       return { ...state, page: action.payload }
     }
     default: {

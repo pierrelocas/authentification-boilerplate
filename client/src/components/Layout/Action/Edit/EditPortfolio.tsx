@@ -6,147 +6,157 @@ import {
   TextField,
   Button,
   withStyles,
-  Typography,
-  makeStyles,
+  makeStyles
 } from '@material-ui/core'
 import { green, orange } from '@material-ui/core/colors'
-import {
-  LayoutStateContext,
-  LayoutDispatchContext,
-  DataStateContext,
-} from '../../../../contexts'
-import { useForm, Controller } from 'react-hook-form'
+import { DataStateContext } from '../../../../contexts'
 import {
   useCreatePortfolioMutation,
   PortfoliosQuery,
-  PortfoliosDocument,
-  Portfolio,
+  PortfoliosDocument
 } from '../../../../generated/graphql'
 
 interface Props {}
 
-interface IEditPortfolio {
+interface IPortfolioStage {
   name: string
   exchange: string
   currency: string
 }
 
-const intitialEditPortfolio: IEditPortfolio = {
+const intitialPortfolioStage: IPortfolioStage = {
   name: '',
   exchange: '',
-  currency: '',
+  currency: ''
 }
 
 const AddUpdateSwitch = withStyles({
   switchBase: {
     color: green[500],
     '&$checked': {
-      color: orange[500],
+      color: orange[500]
     },
     '&$checked + $track': {
-      backgroundColor: orange[500],
-    },
+      backgroundColor: orange[500]
+    }
   },
   checked: {},
-  track: { backgroundColor: green[500] },
+  track: { backgroundColor: green[500] }
 })(Switch)
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   colorCreate: {
-    color: green[500],
+    color: green[500]
   },
   colorUpdate: {
-    color: orange[500],
+    color: orange[500]
   },
   backgroundCreate: {
     backgroundColor: green[500],
-    color: 'white',
+    color: 'white'
   },
   backgroundUpdate: {
     backgroundColor: orange[500],
-    color: 'white',
+    color: 'white'
   },
   backgroundDelete: {
     backgroundColor: theme.palette.error.dark,
-    color: 'white',
-  },
+    color: 'white'
+  }
 }))
 
 export const EditPortfolio: React.FC<Props> = () => {
-  const layoutState: any = useContext(LayoutStateContext)
-  const layoutDispatch: any = useContext(LayoutDispatchContext)
   const dataState: any = useContext(DataStateContext)
-  const [editPortfolio, setEditPortfolio] = useState<IEditPortfolio>(
-    intitialEditPortfolio
+  const [editing, setEditing] = useState(false)
+  const [portfolioStaging, setPortfolioStaging] = useState<IPortfolioStage>(
+    intitialPortfolioStage
   )
   const [createPortfolio] = useCreatePortfolioMutation({
     variables: {
-      ...editPortfolio,
+      ...portfolioStaging
     },
+
     update: (cache, { data }) => {
       const { portfolios } = cache.readQuery({
-        query: PortfoliosDocument,
+        query: PortfoliosDocument
       }) as PortfoliosQuery
-
-      console.log(portfolios)
-      console.log([data?.createPortfolio])
 
       if (!data) {
         return null
       }
+
       cache.writeQuery<PortfoliosQuery>({
         query: PortfoliosDocument,
         data: {
-          portfolios: portfolios.concat([data.createPortfolio]),
-        },
+          portfolios: portfolios.concat([data.createPortfolio])
+        }
       })
-      // if (data && data.createPortfolio) {
-      //   portfolios.push(data.createPortfolio)
-      //   console.log(portfolios)
-      // }
-      //   if (!data) {
-      //     return null
-      //   }
-      //   const   = cache.readQuery({query: PortfoliosDocument})
-      //   const {portfolios} = r
-      //   cache.writeQuery<any>({
-      //     query: PortfoliosDocument,
-      //     data: {
-      //       portfolios: {portfolios.concat([data.createPortfolio]) }
-      //     }
-      //   })
-    },
+    }
   })
 
   const classes = useStyles()
 
-  useEffect(() => {
-    console.log('test')
-    if (layoutState.edit === 'update') {
-      const currentPortfolio: any = dataState.portfolios.find(
-        (p: any) => p.id === dataState.activePortfolio
-      )
-      setEditPortfolio({
-        ...editPortfolio,
-        name: currentPortfolio.name,
-        exchange: currentPortfolio.exchange,
-        currency: currentPortfolio.currency,
-      })
-    } else {
-      setEditPortfolio(intitialEditPortfolio)
-    }
-  }, [layoutState.edit, dataState.activePortfolio])
+  // useEffect(() => {
+  //   if (layoutState.editActionType === 'update') {
+  //     const currentPortfolio: any = dataState.portfolios.find(
+  //       (p: any) => p.id === dataState.activePortfolio
+  //     )
+  //     if (!dataState.activePortfolio) {
+  //       alert('Select a portfolio to edit')
+  //     } else {
+  //       setEditPortfolio({
+  //         ...editPortfolio,
+  //         name: currentPortfolio.name,
+  //         exchange: currentPortfolio.exchange,
+  //         currency: currentPortfolio.currency,
+  //       })
+  //     }
+  //   } else {
+  //     setEditPortfolio(intitialEditPortfolio)
+  //   }
+  // }, [layoutState.editActionType, dataState.activePortfolio])
 
   const handleChange = (event: any) => {
-    setEditPortfolio({
-      ...editPortfolio,
-      [event.currentTarget.name]: event.currentTarget.value,
+    setPortfolioStaging({
+      ...portfolioStaging,
+      [event.currentTarget.name]: event.currentTarget.value
     })
   }
-  const handleSubmit: any = (action: string) => {
-    if (action === 'create') {
-      return createPortfolio
-    }
+  const handleSubmit: any = (event: any) => {
+    // if (layoutState.editActionType === 'create') {
+    //   console.log('create')
+    //   createPortfolio()
+    // } else if (layoutState.editActionType === 'update') {
+    //   console.log('update')
+    // }
+  }
+
+  const handleEditingType = (editing: boolean) => {
+    console.log(editing)
+    setEditing(() => {
+      if (!editing) {
+        setPortfolioStaging(intitialPortfolioStage)
+        return false
+      }
+      if (dataState.activePortfolio) {
+        const currentPortfolio: any = dataState.portfolios.find(
+          (p: any) => p.id === dataState.activePortfolio
+        )
+        setPortfolioStaging(currentPortfolio)
+        return true
+      }
+      alert('Please select portfolio to update')
+      return false
+    })
+    // if (action === 'create') {
+    //   layoutDispatch({ type: 'setEditActionType', payload: 'create' })
+    // } else if (action === 'update') {
+    //   if (dataState.activePortfolio) {
+    //     layoutDispatch({ type: 'setEditActionType', payload: 'update' })
+    //   } else {
+    //     // show message to select a portfolio first
+    //   }
+    // }
   }
 
   return (
@@ -159,15 +169,17 @@ export const EditPortfolio: React.FC<Props> = () => {
             paddingTop: 0,
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent: 'flex-end'
           }}
         >
           <Button
-            onClick={() => {
-              layoutDispatch({ type: 'setEdit', payload: 'create' })
+            onClick={e => {
+              console.log(e)
+              handleEditingType(false)
             }}
             className={clsx(
-              layoutState.edit === 'create' && classes.colorCreate
+              // layoutState.editActionType === 'create' && classes.colorCreate
+              !editing && classes.colorCreate
             )}
           >
             Create/Add
@@ -179,13 +191,17 @@ export const EditPortfolio: React.FC<Props> = () => {
           style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
         >
           <AddUpdateSwitch
-            checked={layoutState.edit === 'update'}
-            onChange={(event: any) =>
-              layoutDispatch({
-                type: 'setEdit',
-                payload: event.target.checked ? 'update' : 'create',
-              })
+            checked={
+              editing
+              // dataState.activePortfolio &&
+              // // layoutState.editActionType === 'update'
             }
+            onClick={(event: any) => {
+              handleEditingType(event.target.checked)
+              // console.log(event.target.checked)
+              // setEditing(previous => !previous)
+              // handleActionTypeChange(event.target.checked ? 'update' : 'create')
+            }}
             color='primary'
           />
         </Grid>
@@ -195,15 +211,17 @@ export const EditPortfolio: React.FC<Props> = () => {
           style={{
             paddingTop: 0,
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
           <Button
-            onClick={() => {
-              layoutDispatch({ type: 'setEdit', payload: 'update' })
+            onClick={e => {
+              console.log(e)
+              handleEditingType(true)
             }}
             className={clsx(
-              layoutState.edit === 'update' && classes.colorUpdate
+              editing && classes.colorUpdate
+              // layoutState.editActionType === 'update' && classes.colorUpdate
             )}
           >
             Edit/Update
@@ -215,7 +233,7 @@ export const EditPortfolio: React.FC<Props> = () => {
             fullWidth
             label='Name'
             autoFocus
-            value={editPortfolio.name}
+            value={portfolioStaging.name}
             onChange={handleChange}
           />
         </Grid>
@@ -225,7 +243,7 @@ export const EditPortfolio: React.FC<Props> = () => {
             fullWidth
             label='Exchange'
             autoFocus
-            value={editPortfolio.exchange}
+            value={portfolioStaging.exchange}
             onChange={handleChange}
           />
         </Grid>
@@ -235,7 +253,7 @@ export const EditPortfolio: React.FC<Props> = () => {
             fullWidth
             label='Currency'
             autoFocus
-            value={editPortfolio.currency}
+            value={portfolioStaging.currency}
             onChange={handleChange}
           />
         </Grid>
@@ -245,14 +263,14 @@ export const EditPortfolio: React.FC<Props> = () => {
             variant='contained'
             fullWidth
             className={clsx(
-              layoutState.edit === 'create'
-                ? classes.backgroundCreate
-                : classes.backgroundUpdate
+              // layoutState.editActionType === 'create'
+              !editing ? classes.backgroundCreate : classes.backgroundUpdate
             )}
             // value={newAction ? 'add' : 'update'}
-            onClick={handleSubmit('create')}
+            onClick={handleSubmit}
           >
-            {layoutState.edit === 'create' ? 'create' : 'update'}
+            {/* {layoutState.editActionType === 'create' ? 'create' : 'update'} */}
+            {editing ? 'create' : 'update'}
           </Button>
         </Grid>
         <Grid item xs={6}>
@@ -260,12 +278,14 @@ export const EditPortfolio: React.FC<Props> = () => {
             size='small'
             variant='contained'
             fullWidth
-            onClick={(event: any) =>
-              layoutState.edit === 'create' &&
-              setEditPortfolio(intitialEditPortfolio)
+            onClick={
+              (event: any) => console.log('clear/delete')
+              // layoutState.editActionType === 'create' &&
+              // !editing && setPortfolioStaging(intitialPortfolioStage)
             }
           >
-            {layoutState.edit === 'create' ? 'clear' : 'detele'}
+            {/* {layoutState.editActionType === 'create' ? 'clear' : 'detele'} */}
+            {editing ? 'clear' : 'detele'}
           </Button>
         </Grid>
       </Grid>

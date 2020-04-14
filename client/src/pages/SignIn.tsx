@@ -16,8 +16,9 @@ import { useForm, Controller } from 'react-hook-form'
 import { Container, Theme } from '@material-ui/core'
 import { MeQuery, MeDocument, useSignInMutation } from '../generated/graphql'
 import { setAccessToken } from '../accessToken'
-import { NotificationContext } from '../contexts'
+// import { NotificationContext } from '../contexts'
 import { Spinner } from '../Spinner'
+import { NotificationContext } from '../contexts/NotificationProvider'
 
 type FormData = {
   email: string

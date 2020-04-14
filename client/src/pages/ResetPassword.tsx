@@ -13,7 +13,7 @@ import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link as RouterLink, RouteComponentProps } from 'react-router-dom'
 import { useSendResetPasswordEmailMutation } from '../generated/graphql'
-import { NotificationContext } from '../contexts'
+import { NotificationContext } from '../contexts/NotificationProvider'
 
 type FormData = {
   email: string

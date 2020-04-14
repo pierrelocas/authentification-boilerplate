@@ -28,20 +28,6 @@ export const DataReducer = (
     case 'setActivePosition': {
       return { ...state, activePosition: action.payload }
     }
-
-    // case 'setData': {
-    //   const portfolios = action.payload.data?.portfolios
-    //   const portfolioId =
-    //     !state.activePortfolio && portfolios?.length
-    //       ? portfolios.find((p: any) => p.favorite)?.id
-    //       : state.activePortfolio
-    //   return {
-    //     ...state,
-    //     ...action.payload.data,
-    //     loading: action.payload.loading,
-    //     activePortfolio: portfolioId,
-    //   }
-    // }
     default: {
       return { ...state }
     }

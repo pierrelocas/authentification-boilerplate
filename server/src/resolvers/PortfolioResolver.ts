@@ -116,7 +116,14 @@ export class PortfolioResolver {
 
   @Mutation(() => Int)
   @UseMiddleware(isAuth)
-  async deletePortfolio(@Arg('portfolioId', () => Int) id: number) {
+  async deletePortfolio(
+    @Arg('portfolioId', () => Int) id: number,
+    @Ctx() { payload }: MyContext
+  ) {
+    const portfolio = await Portfolio.findOne({ id })
+    if (portfolio!.userId !== payload!.userId) {
+      throw new Error('Portfolio does not belongs to user.')
+    }
     const result = await Portfolio.delete({ id })
     if (result.affected === 0) {
       throw new Error('Oooops, nothing was deleted, failed.')

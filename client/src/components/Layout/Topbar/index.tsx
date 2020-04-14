@@ -20,11 +20,8 @@ import clsx from 'clsx'
 import { useSignOutMutation } from '../../../generated/graphql'
 import { setAccessToken } from '../../../accessToken'
 import { useHistory } from 'react-router-dom'
-import {
-  LayoutStateContext,
-  LayoutDispatchContext,
-  NotificationContext
-} from '../../../contexts'
+import { LayoutStateContext } from '../../../contexts/LayoutProvider'
+import { NotificationContext } from '../../../contexts/NotificationProvider'
 
 interface Props {}
 
@@ -92,15 +89,16 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
-  },
-  appBarSpacer: theme.mixins.toolbar
+  }
 }))
 
 export const Topbar: React.FC<Props> = props => {
   const { setNotification } = useContext(NotificationContext)
-  const state: any = useContext(LayoutStateContext)
-  const dispatch: any = useContext(LayoutDispatchContext)
+  const context: any = useContext(LayoutStateContext)
+  const [anchorEl, setAnchorEl] = useState(null)
   const history = useHistory()
+  const classes = useStyles()
+
   const [logout, { client }] = useSignOutMutation({
     onError: err =>
       setNotification!({
@@ -112,8 +110,6 @@ export const Topbar: React.FC<Props> = props => {
       client!.resetStore()
     }
   })
-  const classes = useStyles()
-  const [anchorEl, setAnchorEl] = useState(null)
 
   const anchorOpen = Boolean(anchorEl)
 
@@ -146,17 +142,20 @@ export const Topbar: React.FC<Props> = props => {
   return (
     <AppBar
       position='absolute'
-      className={clsx(classes.appBar, state.openMenuBar && classes.appBarShift)}
+      className={clsx(
+        classes.appBar,
+        context.openMenuBar && classes.appBarShift
+      )}
     >
       <Toolbar className={classes.toolbar}>
         <IconButton
           edge='start'
           color='inherit'
           aria-label='open drawer'
-          onClick={() => dispatch({ type: 'toggleMenuBar' })}
+          onClick={() => context.toggleMenu()}
           className={clsx(
             classes.menuButton,
-            state.openMenuBar && classes.menuButtonHidden
+            context.openMenuBar && classes.menuButtonHidden
           )}
         >
           <MenuIcon />
@@ -168,7 +167,7 @@ export const Topbar: React.FC<Props> = props => {
           noWrap
           className={classes.title}
         >
-          {state.title}
+          {context.title}
         </Typography>
         <div className={classes.search}>
           <div className={classes.searchIcon}>

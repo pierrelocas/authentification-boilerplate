@@ -1,7 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
-
 import Paper from '@material-ui/core/Paper'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel'
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
@@ -16,17 +15,30 @@ import CartArrowDown from 'mdi-material-ui/CartArrowDown'
 import EditIcon from '@material-ui/icons/Edit'
 import SettingsIcon from '@material-ui/icons/Settings'
 import TransactionAction from '../../TransactionAction'
-// import EditPortfolioAction from './EditAction/EditPortfolioAction'
-// import EditTransactionAction from './EditAction/EditTransactionAction'
 import { EditAction } from './Edit/'
-
-import { ACTIONBAR_WIDTH } from '../../../config'
-import { LayoutStateContext, LayoutDispatchContext } from '../../../contexts'
+import { ACTIONBAR_WIDTH, ACTIONBAR_COMPACT_WIDTH } from '../../../config'
 import { PortfolioAction } from './Portfolio'
+import { LayoutStateContext } from '../../../contexts/LayoutProvider'
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: ACTIONBAR_WIDTH
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  actionBar: {
+    position: 'absolute',
+    right: 0,
+    transition: theme.transitions.create('right', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen
+    })
+  },
+  actionBarClosed: {
+    right: -(ACTIONBAR_WIDTH - ACTIONBAR_COMPACT_WIDTH),
+    transition: theme.transitions.create('right', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    })
   },
   paper: {
     height: theme.spacing(7),
@@ -59,124 +71,117 @@ const useStyles = makeStyles(theme => ({
 interface Props {}
 
 export const Actionbar: React.FC<Props> = () => {
-  const state: any = useContext(LayoutStateContext)
-  const dispatch: any = useContext(LayoutDispatchContext)
+  const context: any = useContext(LayoutStateContext)
+  // const dispatch: any = useContext(LayoutDispatchContext)
 
   const classes = useStyles()
 
   return (
-    <div className={classes.root}>
-      <Paper
-        className={clsx(
-          classes.paper,
-          !state.openActionBar && classes.paperCompact
-        )}
-      >
-        <Typography component='h2' variant='h6' color='primary'>
-          Actions
-        </Typography>
-        <IconButton
-          size='small'
-          color='primary'
-          onClick={() => dispatch({ type: 'toggleActionBar' })}
+    <section
+      className={clsx(
+        classes.actionBar,
+        !context.openActionBar && classes.actionBarClosed
+      )}
+    >
+      <div className={classes.appBarSpacer} />
+      <div className={classes.root}>
+        <Paper
+          className={clsx(
+            classes.paper,
+            !context.openActionBar && classes.paperCompact
+          )}
         >
-          {state.openActionBar ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-        </IconButton>
-      </Paper>
-      <ExpansionPanel
-        expanded={state.actionSection.portfolio}
-        onChange={() =>
-          dispatch({ type: 'toggleActionSection', payload: 'portfolio' })
-        }
-      >
-        <ExpansionPanelSummary
-          className={classes.expSummary}
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <IconButton size='small'>
-            <SwapHorizontalBold color='action' />
-          </IconButton>
-          <Typography className={classes.heading}>Portfolios</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.zeroSpacingTop}>
-          <PortfolioAction />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel
-        expanded={state.actionSection.transaction}
-        onChange={() =>
-          dispatch({
-            type: 'toggleActionSection',
-            payload: 'transaction'
-          })
-        }
-      >
-        <ExpansionPanelSummary
-          className={classes.expSummary}
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <IconButton size='small'>
-            <CartArrowDown color='action' />
-          </IconButton>
-
-          <Typography className={classes.heading}>Transaction</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <TransactionAction
-          // activePortfolio={activePortfolio}
-          // QUERY={QUERY}
-          // transactions={transactions}
-          // selectedTransactionId={selectedTransactionId}
-          />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel
-        expanded={state.actionSection.edit}
-        onChange={() =>
-          dispatch({
-            type: 'toggleActionSection',
-            payload: 'edit'
-          })
-        }
-      >
-        <ExpansionPanelSummary
-          className={classes.expSummary}
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <IconButton size='small'>
-            <EditIcon color='action' />
-          </IconButton>
-          <Typography className={classes.heading}>Edit</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <EditAction />
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-      <ExpansionPanel
-        expanded={state.actionSection.setting}
-        onChange={() =>
-          dispatch({
-            type: 'toggleActionSection',
-            payload: 'setting'
-          })
-        }
-      >
-        <ExpansionPanelSummary
-          className={classes.expSummary}
-          expandIcon={<ExpandMoreIcon />}
-        >
-          <IconButton size='small'>
-            <SettingsIcon color='action' />
-          </IconButton>
-          <Typography className={classes.heading}>Advanced Settings</Typography>
-        </ExpansionPanelSummary>
-        <ExpansionPanelDetails>
-          <Typography>
-            Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer
-            sit amet egestas eros, vitae egestas augue. Duis vel est augue.
+          <Typography component='h2' variant='h6' color='primary'>
+            Actions
           </Typography>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-    </div>
+          <IconButton
+            size='small'
+            color='primary'
+            onClick={() => context.toggleAction()}
+          >
+            {context.openActionBar ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          </IconButton>
+        </Paper>
+        <ExpansionPanel
+          expanded={context.actionSection.portfolio}
+          onChange={() => context.toggleActionSection('portfolio')}
+        >
+          <ExpansionPanelSummary
+            className={classes.expSummary}
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <IconButton size='small'>
+              <SwapHorizontalBold color='action' />
+            </IconButton>
+            <Typography className={classes.heading}>Portfolios</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={classes.zeroSpacingTop}>
+            <PortfolioAction />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel
+          expanded={context.actionSection.transaction}
+          onChange={() => context.toggleActionSection('transaction')}
+        >
+          <ExpansionPanelSummary
+            className={classes.expSummary}
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <IconButton size='small'>
+              <CartArrowDown color='action' />
+            </IconButton>
+
+            <Typography className={classes.heading}>Transaction</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <TransactionAction
+            // activePortfolio={activePortfolio}
+            // QUERY={QUERY}
+            // transactions={transactions}
+            // selectedTransactionId={selectedTransactionId}
+            />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel
+          expanded={context.actionSection.edit}
+          onChange={() => context.toggleActionSection('edit')}
+        >
+          <ExpansionPanelSummary
+            className={classes.expSummary}
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <IconButton size='small'>
+              <EditIcon color='action' />
+            </IconButton>
+            <Typography className={classes.heading}>Edit</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <EditAction />
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+        <ExpansionPanel
+          expanded={context.actionSection.setting}
+          onChange={() => context.toggleActionSection('setting')}
+        >
+          <ExpansionPanelSummary
+            className={classes.expSummary}
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <IconButton size='small'>
+              <SettingsIcon color='action' />
+            </IconButton>
+            <Typography className={classes.heading}>
+              Advanced Settings
+            </Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography>
+              Nunc vitae orci ultricies, auctor nunc in, volutpat nisl. Integer
+              sit amet egestas eros, vitae egestas augue. Duis vel est augue.
+            </Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      </div>
+    </section>
   )
 }

@@ -20,7 +20,7 @@ import {
 } from '@material-ui/core'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import { useForm } from 'react-hook-form'
-import { NotificationContext } from '../contexts'
+import { NotificationContext } from '../contexts/NotificationProvider'
 
 interface Props extends RouteComponentProps {}
 

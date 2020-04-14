@@ -5,53 +5,52 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import clsx from 'clsx'
 import React, { useContext } from 'react'
 import { DataStateContext, DataDispatchContext } from '../contexts'
-import { LayoutDispatchContext } from '../contexts'
 import {
   useDeletePortfolioMutation,
   PortfoliosDocument,
-  PortfoliosQuery,
+  PortfoliosQuery
 } from '../generated/graphql'
 import Title from './Title'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   portfolioContext: {
-    flex: 1,
+    flex: 1
   },
   paper: {
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   fixedHeight: {
     height: 240,
-    overflow: 'hidden',
+    overflow: 'hidden'
   },
   active: {
     borderBottomStyle: 'solid',
     borderBottomWidth: 3,
-    borderBottomColor: theme.palette.primary.main,
+    borderBottomColor: theme.palette.primary.main
   },
   iconsSection: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-end'
   },
   actionIcon: {
-    marginLeft: '2px',
-  },
+    marginLeft: '2px'
+  }
 }))
 
 interface Props {}
 
 export const Portfolio: React.FC<Props> = (props: any) => {
-  const layoutDispatch: any = useContext(LayoutDispatchContext)
   const dataState: any = useContext(DataStateContext)
   const dataDispatch: any = useContext(DataDispatchContext)
+
   const [deletePortfolio] = useDeletePortfolioMutation({
-    onError: (err) => console.log(err),
+    onError: err => console.log(err),
     update: (cache, { data }) => {
       const { portfolios } = cache.readQuery({
-        query: PortfoliosDocument,
+        query: PortfoliosDocument
       }) as PortfoliosQuery
       if (!data) {
         return null
@@ -61,14 +60,16 @@ export const Portfolio: React.FC<Props> = (props: any) => {
         data: {
           portfolios: portfolios.filter(
             (p: any) => p.id !== data.deletePortfolio
-          ),
-        },
+          )
+        }
       })
+      // dataDispatch({ type: 'setEditActionType', payload: 'create' })
+      // dataDispatch({ type: 'setActivePortfolio', payload: null })
       console.log('updating cache', cache, data?.deletePortfolio)
-    },
+    }
   })
-  const { id, name, exchange, currency } = props
   const classes = useStyles()
+  const { id, name, exchange, currency } = props
 
   return (
     <Paper
@@ -81,14 +82,17 @@ export const Portfolio: React.FC<Props> = (props: any) => {
       onClick={() =>
         dataDispatch({
           type: 'setActivePortfolio',
-          payload: id,
+          payload: id
         })
       }
     >
       <div className={classes.iconsSection}>
         <IconButton
           size='small'
-          onClick={() => layoutDispatch({ type: 'setEdit', payload: 'update' })}
+          onClick={() => {
+            console.log('editing requested')
+            // layoutDispatch({ type: 'setEditActionType', payload: 'update' })
+          }}
           className={classes.actionIcon}
         >
           <EditIcon color='action' />
@@ -97,7 +101,7 @@ export const Portfolio: React.FC<Props> = (props: any) => {
           size='small'
           onClick={() => {
             console.log('deleting', id)
-            deletePortfolio({ variables: { portfolioId: id } })
+            //  deletePortfolio({ variables: { portfolioId: id } })
           }}
           className={classes.actionIcon}
         >

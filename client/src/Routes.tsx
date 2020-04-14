@@ -12,10 +12,10 @@ const SignIn = lazy(() => import('./pages/SignIn'))
 const Bye = lazy(() => import('./pages/Bye'))
 const ConfirmEmail = lazy(() => import('./pages/ConfirmEmail'))
 const NewPassword = lazy(() => import('./pages/NewPassword'))
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const ResendConfirmationEmail = lazy(() =>
   import('./pages/ResendConfirmationEmail')
 )
-const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 
 interface Props {}
 /****
