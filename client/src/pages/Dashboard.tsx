@@ -1,15 +1,15 @@
 import React, { useContext } from 'react'
-import { DataStateContext } from '../contexts'
+import { PortfoliosContext } from '../contexts/PortfoliosProvider'
 
 interface Props {}
 
-const Dashboard: React.FC<Props> = (props) => {
-  const dataState: any = useContext(DataStateContext)
-  console.log(dataState.portfolios)
+const Dashboard: React.FC<Props> = props => {
+  const context: any = useContext(PortfoliosContext)
+  console.log(context.portfolios)
   return (
     <div>
       <div>Dashboard...</div>
-      <div>{JSON.stringify({ ...dataState }, null, 2)} </div>
+      <div>{JSON.stringify({ ...context.portfolios }, null, 2)} </div>
     </div>
   )
 }

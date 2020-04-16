@@ -4,7 +4,7 @@ import { Home } from './pages/Home'
 import { Spinner } from './Spinner'
 import { Layout } from './components/Layout'
 import { AuthRoute } from './AuthRoutes'
-import Portfolios from './pages/Porfolios'
+import Portfolios from './pages/Portfolios'
 
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const SignUp = lazy(() => import('./pages/SignUp'))

@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import React, { useContext } from 'react'
 import { DataDispatchContext, DataStateContext } from '../../../../contexts'
 import { GlobalStateContext } from '../../../../contexts/GlobalProvider'
+import { PortfoliosContext } from '../../../../contexts/PortfoliosProvider'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,9 +32,8 @@ const useStyles = makeStyles(theme => ({
 interface Props {}
 
 export const PortfolioAction: React.FC<Props> = () => {
-  const dataState: any = useContext(DataStateContext)
+  const context: any = useContext(PortfoliosContext)
   const globalState: any = useContext(GlobalStateContext)
-  const dataDispatch: any = useContext(DataDispatchContext)
   const classes = useStyles()
 
   return (
@@ -50,7 +50,7 @@ export const PortfolioAction: React.FC<Props> = () => {
           className={classes.selectEmpty}
           onChange={event => globalState.setActivePortfolio(event.target.value)}
         >
-          {dataState.portfolios.map((p: any) => (
+          {context.portfolios.map((p: any) => (
             <MenuItem key={p.id} value={p.id}>
               {p.name}
               <span
