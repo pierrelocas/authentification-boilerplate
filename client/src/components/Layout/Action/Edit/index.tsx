@@ -5,8 +5,8 @@ import { GlobalStateContext } from '../../../../contexts/GlobalProvider'
 interface Props {}
 
 export const EditAction: React.FC<Props> = () => {
-  const globalContext: any = useContext(GlobalStateContext)
-  switch (globalContext.page) {
+  const { page } = useContext(GlobalStateContext)
+  switch (page) {
     case 'portfolios':
       return <EditPortfolio />
     default:

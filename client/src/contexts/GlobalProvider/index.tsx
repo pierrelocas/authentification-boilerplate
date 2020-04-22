@@ -16,6 +16,7 @@ export interface IGlobalState {
   activePortfolio: number | null
   activeTransaction: number | null
   activePosition: number | null
+  setActivePortfolio?: (portfolioId: number) => void
 }
 
 export const initialState: IGlobalState = {
@@ -23,18 +24,20 @@ export const initialState: IGlobalState = {
   title: '',
   activePortfolio: null,
   activeTransaction: null,
-  activePosition: null
+  activePosition: null,
 }
 
-export const GlobalStateContext: any = createContext(initialState)
+export const GlobalStateContext = createContext(initialState)
 
 export const GlobalProvider: React.FC<Props> = ({ children, page, title }) => {
   const [state, dispatch] = useReducer(GlobalReducer, initialState)
+
   useEffect(() => {
     setPage(page)
     setTitle(title)
   }, [page, title])
 
+  // Actions
   function setPage(page: string) {
     dispatch({ type: 'SET_PAGE', payload: page })
   }
@@ -43,7 +46,6 @@ export const GlobalProvider: React.FC<Props> = ({ children, page, title }) => {
     dispatch({ type: 'SET_TITLE', payload: title })
   }
 
-  //Actions
   function setActivePortfolio(portfolioId: number) {
     dispatch({ type: 'SET_ACTIVE_PORTFOLIO', payload: portfolioId })
   }

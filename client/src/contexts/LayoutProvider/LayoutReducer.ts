@@ -13,7 +13,7 @@ export const LayoutReducer = (
         return {
           ...state,
           openActionBar: !state.openActionBar,
-          actionSection: intialLayoutState.actionSection
+          actionSection: intialLayoutState.actionSection,
         }
       else {
         return { ...state, openActionBar: !state.openActionBar }
@@ -23,10 +23,11 @@ export const LayoutReducer = (
       if (!action.payload) return { ...state }
       return {
         ...state,
+        openActionBar: true,
         actionSection: {
           ...state.actionSection,
-          [action.payload]: !(state.actionSection as any)[action.payload]
-        }
+          [action.payload]: !(state.actionSection as any)[action.payload],
+        },
       }
     }
     case 'setEditActionType': {
@@ -34,7 +35,7 @@ export const LayoutReducer = (
         ...state,
         openActionBar: true,
         actionSection: { ...state.actionSection, edit: true },
-        editActionType: action.payload
+        editActionType: action.payload,
       }
     }
     case 'SET_TITLE': {
