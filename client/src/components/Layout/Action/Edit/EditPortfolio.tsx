@@ -26,7 +26,7 @@ const intitialStagedPortfolio: IStagedPortfolio = {
   name: '',
   exchange: '',
   currency: '',
-}
+} as const
 
 const AddUpdateSwitch = withStyles({
   switchBase: {
@@ -83,12 +83,16 @@ export const EditPortfolio: React.FC<Props> = () => {
       setEditingActivePortfolio(value)
       setStagedPortfolio(intitialStagedPortfolio)
     }
+
     // Update existing requested
     else {
       setEditingActivePortfolio(true)
-      const portfolio = portfolios.find((p) => p.id === activePortfolio)
-      console.log(portfolio)
-      // const keys: <T, K keyof IStagedPortfolio> = Object.keys(stagedPortfolio)
+      // const portfolio = portfolios.find((p) => p.id === activePortfolio) as string[]
+      // console.log(portfolio)
+      // type types = keyof typeof stagedPortfolio
+      // type keys = keyof IStagedPortfolio
+      // console.log(types)
+      // console.log(keys)
       // keys.forEach((element) => {
       //   console.log(stagedPortfolio[element])
       // })
